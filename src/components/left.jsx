@@ -5,6 +5,7 @@ const Left = ({ addLeft }) => {
     <button
       onClick={() => addLeft()}
       className="btn btn-secondary btn-sm m-2"
+      style={{ float: "left" }}
     >
       Left
     </button>

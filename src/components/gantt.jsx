@@ -4,7 +4,9 @@ import CalendarTable from "./calendarTable";
 import AddRow from "./addRow";
 import Left from "./left";
 import Right from "./right";
+import Details from "./details";
 import AddBoxIcon from "@material-ui/icons/AddBox";
+import Grid from "@material-ui/core/Grid";
 
 class Gantt extends Component {
   state = {
@@ -50,6 +52,7 @@ class Gantt extends Component {
         dayName: dateStart.format("ddd"),
         key: dateStart.format("DD/MM/YYYY"),
         value: dateStart.format("DD/MM/YYYY"),
+        momentValue: dateStart,
         background: "",
       });
       dateStart.add(1, "days");
@@ -84,19 +87,30 @@ class Gantt extends Component {
     const addMonth = moment().add(endTime.count, "months");
     endTime.value += addMonth.daysInMonth();
     endTime.count += 1;
-    console.log(addMonth.daysInMonth());
     this.setState({ endTime }, this.componentDidMount);
   };
 
-  colourChangeOn = (cellKey, activeRow) => {
+  colourChangeOn = (cellKey, activeRow, widthCount) => {
     const days = [...this.state.days];
-    const index = days.findIndex((day) => day.value === cellKey);
-    const cell = { ...days[index] };
-    cell.background = "#4f5b66";
-    days[index] = cell;
-    const rows = { ...this.state.rows };
-    rows.active = activeRow;
-    this.setState({ days, rows });
+    let index = days.findIndex((day) => day.value === cellKey);
+    if (widthCount > 0) {
+      for (let i = 0; i < widthCount; i++) {
+        const cell = { ...days[index] };
+        cell.background = "#4f5b66";
+        days[index] = cell;
+        const rows = { ...this.state.rows };
+        rows.active = activeRow;
+        index++;
+        this.setState({ days, rows });
+      }
+    } else {
+      const cell = { ...days[index] };
+      cell.background = "#4f5b66";
+      days[index] = cell;
+      const rows = { ...this.state.rows };
+      rows.active = activeRow;
+      this.setState({ days, rows });
+    }
   };
 
   colourChangeOff = (cellKey, activeRow) => {
@@ -108,29 +122,77 @@ class Gantt extends Component {
     this.setState({ days });
   };
 
+  allColoursOff = () => {
+    const days = [...this.state.days];
+    days.forEach((element) => {
+      element.background = "";
+    });
+    this.setState({ days });
+  };
+
+  taskColourChangeOn = (cellKey, activeRow) => {
+    const days = [...this.state.days];
+    const index = days.findIndex((day) => day.value === cellKey);
+    const cell = { ...days[index] };
+    cell.background = "#4f5b66";
+    days[index] = cell;
+    const rows = { ...this.state.rows };
+    rows.active = activeRow;
+    this.setState({ days, rows });
+  };
+
+  taskColourChangeOff = (cellKey, activeRow) => {
+    const days = [...this.state.days];
+    const index = days.findIndex((day) => day.value === cellKey);
+    const cell = { ...days[index] };
+    cell.background = "";
+    days[index] = cell;
+    this.setState({ days });
+  };
+
   render() {
     const { days, months, rows } = this.state;
+
     return (
-      <div>
-        <AddRow handleAddRows={this.handleAddRows} />
-        <Left addLeft={this.addLeft} />
-        <Right addRight={this.addRight} />
-        <div
-          style={{
-            height: "500px",
-            overflow: "scroll",
-            backgroundColor: "gray",
-          }}
-        >
-          <CalendarTable
-            days={days}
-            months={months}
-            rows={rows}
-            colourChangeOn={this.colourChangeOn}
-            colourChangeOff={this.colourChangeOff}
-          />
-        </div>
-      </div>
+      <Grid container spacing={0}>
+        <Grid item xs={6}>
+          <Left addLeft={this.addLeft} />
+        </Grid>
+        <Grid item xs={6}>
+          <Right addRight={this.addRight} />
+        </Grid>
+        <Grid item xs={1}>
+          <AddRow handleAddRows={this.handleAddRows} />
+        </Grid>
+        <Grid item xs={11}>
+          <div
+            style={{
+              height: "500px",
+              width: "91.777%",
+              overflow: "scroll",
+              backgroundColor: "gray",
+              position: "absolute",
+              display: "flex",
+            }}
+            className="boundary"
+          >
+            <CalendarTable
+              days={days}
+              months={months}
+              rows={rows}
+              colourChangeOn={this.colourChangeOn}
+              colourChangeOff={this.colourChangeOff}
+              allColoursOff={this.allColoursOff}
+              taskColourChangeOn={this.taskColourChangeOn}
+              taskColourChangeOff={this.taskColourChangeOff}
+              className="tableBoundary"
+            />
+          </div>
+        </Grid>
+        <Grid item xs={12} style={{ marginTop: "500px" }}>
+          <Details />
+        </Grid>
+      </Grid>
     );
   }
 }

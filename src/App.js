@@ -7,7 +7,7 @@ import "./App.css";
 function App() {
   return (
     <React.Fragment>
-      <main className="container">
+      <main>
         <Switch>
           <Route path="/gantt" component={Gantt}></Route>
           <Route path="/not-found" component={NotFound}></Route>

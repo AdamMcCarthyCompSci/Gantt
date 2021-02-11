@@ -6,7 +6,6 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
 ReactDOM.render(
   <BrowserRouter>
