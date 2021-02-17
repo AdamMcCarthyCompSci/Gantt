@@ -15,10 +15,10 @@ class Tasks extends Component {
     name: this.props.name,
     description: this.props.description,
     dragging: this.props.dragging,
-    liveWidth: 40
+    liveWidth: 40,
   };
 
-  onTrigger = () => {
+  onTrigger = (liveWidth = "") => {
     const childData = {
       x: this.state.x,
       y: this.state.y,
@@ -29,8 +29,18 @@ class Tasks extends Component {
       mouseRow: this.state.mouseRow,
       mousingOver: this.state.mousingOver,
     };
+    if (liveWidth !== "") {
+      childData.width = liveWidth
+    }
     this.props.parentCallback(childData);
   };
+
+  onDragTrigger = (boolean) => {
+    const childData = {
+      dragging: boolean
+    }
+    this.props.dragCallback(childData)
+  }
 
   handleMouseOver = (column, row, x, y) => {
     this.props.allColoursOff();
@@ -75,9 +85,7 @@ class Tasks extends Component {
 
   titleLength = (width) => {
     let remainder =
-      this.props.name.length -
-      (width / 40) * 3 -
-      (width / 40 - 1);
+      this.props.name.length - (width / 40) * 3 - (width / 40 - 1);
     if (remainder <= 0) {
       return this.props.name;
     } else {
@@ -104,13 +112,16 @@ class Tasks extends Component {
             this.onNameTrigger();
           }}
           onMouseEnter={() => {
-            this.handleMouseOver(column, row, x, y);
+            // this.handleMouseLeave()
+            this.handleMouseOver(column, row, x, y)
+            this.onTrigger();
           }}
           // onMouseOver={() => {
           //   this.handleMouseOver(column, row, x, y);
           // }}
           onMouseLeave={() => {
             this.handleMouseLeave();
+            this.onTrigger()
           }}
           style={{
             display: "flex",
@@ -127,29 +138,41 @@ class Tasks extends Component {
             this.handleMouseLeave();
             this.onTrigger();
           }}
+          onDrag={() => {
+            this.handleMouseLeave()
+            this.onDragTrigger(true)
+          }}
           onDragStop={(e, d) => {
             const currentX = Math.round(d.x / 40) * 40;
             const currentY = Math.round(d.y / 30) * 30;
             this.setState({ x: currentX, y: currentY });
             this.handleMouseLeave();
-            this.onTrigger();
+            this.onDragTrigger(false)
+            this.onTrigger()
+            this.handleMouseOver(column, row, x, y)
           }}
+          dragGrid={[40,30]}
           // onResize={(ref) => {
           //     this.updateWidth(Math.round(ref.offsetWidth / 40) * 40)
           //   }}
-          onResizeStart={() => {
-            this.setState({ dragging: true }, this.onNameTrigger);
-            // console.log("start",this.state.dragging);
-          }}
+          // onResizeStart={() => {
+          //   this.setState({ dragging: true }, this.onNameTrigger);
+          //   // console.log("start",this.state.dragging);
+          // }}
           onResize={(e, direction, ref, delta, position) => {
             // let liveWidth = Math.round(ref.offsetWidth / 40) * 40
             // window.liveWidth = Math.round(ref.offsetWidth / 40) * 40
             // console.log(window.liveWidth)
-            const liveWidth = Math.round(ref.offsetWidth / 40) * 40
-            this.setState({liveWidth})
+            const liveWidth = Math.round(ref.offsetWidth / 40) * 40;
+            if (liveWidth !== this.state.liveWidth) {
+              this.setState({ liveWidth })
+              this.handleMouseLeave()
+              this.onDragTrigger(true)
+            }
             // console.log(liveWidth)
             //   this.titleLength(liveWidth)
           }}
+          resizeGrid = {[40,30]}
           onResizeStop={(e, direction, ref, delta, position) => {
             this.handleMouseLeave();
             this.setState(
@@ -157,10 +180,13 @@ class Tasks extends Component {
                 width: Math.round(ref.offsetWidth / 40) * 40,
                 ...position,
                 dragging: false,
-              },
-              this.onNameTrigger
+              }
             );
-            this.onTrigger();
+            this.handleMouseLeave()
+            this.onNameTrigger()
+            this.onDragTrigger(false)
+            this.onTrigger()
+            this.handleMouseOver(column, row, x, y)
             // console.log("stop",this.state.dragging);
           }}
           enableResizing={{

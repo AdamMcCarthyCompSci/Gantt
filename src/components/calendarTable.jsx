@@ -239,6 +239,7 @@ class CalendarTable extends Component {
                         updateTask={this.updateTaskName}
                         highlighted={this.isHighlighted(t.id)}
                         dragging={this.props.dragging}
+                        dragCallback={this.props.dragCallback}
                       />
                     ))}
                 </td>

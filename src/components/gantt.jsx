@@ -20,7 +20,8 @@ class Gantt extends Component {
     description: "",
     id: 0,
     highlighted: "",
-    dragging: false
+    dragging: false,
+    drag: false
   };
 
   componentDidMount() {
@@ -96,7 +97,7 @@ class Gantt extends Component {
   };
 
   colourChangeOn = (cellKey, activeRow, widthCount) => {
-    // if (!this.state.dragging) {
+    if (!this.state.drag) {
       // console.log("colour",this.state.dragging)
     const days = [...this.state.days];
     let index = days.findIndex((day) => day.value === cellKey);
@@ -120,11 +121,11 @@ class Gantt extends Component {
       this.setState({ days, rows });
     }
   }
-  // }
+  }
   };
 
   colourChangeOff = (cellKey, activeRow) => {
-    // if (this.state.dragging === false) {
+    if (!this.state.drag) {
       // console.log("off",this.state.dragging)
     const days = [...this.state.days];
     const index = days.findIndex((day) => day.value === cellKey);
@@ -132,7 +133,7 @@ class Gantt extends Component {
     cell.background = "";
     days[index] = cell;
     this.setState({ days });
-    // }
+    }
   };
 
   allColoursOff = () => {
@@ -165,6 +166,10 @@ class Gantt extends Component {
 
   handleNameCallback = (childData) => {
     this.setState({ name: childData.name, description: childData.description, id: childData.id, highlighted: childData.highlighted, dragging: childData.dragging })
+  }
+
+  handleDragCallback = (childData) => {
+    this.setState({drag: childData.dragging})
   }
 
   render() {
@@ -208,6 +213,7 @@ class Gantt extends Component {
               id={this.state.id}
               highlighted={this.state.highlighted}
               dragging={this.state.dragging}
+              dragCallback={this.handleDragCallback}
               className="tableBoundary"
             />
           </div>
