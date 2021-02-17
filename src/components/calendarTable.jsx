@@ -10,8 +10,9 @@ class CalendarTable extends Component {
       mouseColumn: "",
       mouseRow: "",
       id: "",
-      mousingOver: false,
+      mousingOver: false
     },
+    highlighted: this.props.highlighted,
   };
 
   handleCreateTask = (index, items, taskCount) => {
@@ -24,6 +25,8 @@ class CalendarTable extends Component {
       width: 40,
       height: 30,
       id: taskCount,
+      name: "",
+      description: ""
     };
     let counter = 0;
     for (let i = 0; i < tasks.length; i++) {
@@ -86,6 +89,7 @@ class CalendarTable extends Component {
     this.setState({ mouseOverTask });
   };
 
+
   handleColourChange = (data, axis) => {
     if (this.state.mouseOverTask.mousingOver) {
       return this.state.mouseOverTask[axis];
@@ -101,6 +105,50 @@ class CalendarTable extends Component {
       return 0;
     }
   };
+
+  // updateTaskName = () => {
+  //   if (this.getStateValue(this.props.id, "name") != this.props.name)
+  //   this.updateTaskState(this.props.id, "name", this.props.name)
+  // }
+
+  updateTaskName = (id, name, description) => {
+    if (this.getStateValue(id, "name") != name || this.getStateValue(id, "description") != description) {
+    const tasks = [...this.state.tasks];
+    const index = this.getTasksIndex(id);
+    const task = { ...tasks[index] };
+    task.name = name;
+    task.description = description
+    tasks[index] = task;
+    this.setState({ tasks });
+    }
+  }
+
+  getName = (id, property) => {
+    if (this.props.id === id) {
+      return this.props[property]
+    }
+    else {
+      return this.getStateValue(id, property)
+    }
+  }
+
+  getDescription = (id) => {
+    if (this.props.id === id) {
+      return this.props.description
+    }
+    else {
+      return this.getStateValue(id, "description")
+    }
+  }
+
+  isHighlighted = (id) => {
+    if (this.props.highlighted == id) {
+      return "solid 1px #ddd"
+    }
+    else {
+      return "solid 3px #0E5A8A"
+    }
+  }
 
   render() {
     const {
@@ -181,11 +229,16 @@ class CalendarTable extends Component {
                         height={this.getStateValue(t.id, "height")}
                         id={t.id}
                         parentCallback={this.handleCallback}
-                        mouseoverCallback={this.handleMouseoverCallback}
+                        nameCallback={this.props.nameCallback}
+                        name={this.getName(t.id, "name")}
+                        description={this.getName(t.id, "description")}
                         column={items.value}
                         row={index}
                         colourChangeOff={colourChangeOff}
                         allColoursOff={allColoursOff}
+                        updateTask={this.updateTaskName}
+                        highlighted={this.isHighlighted(t.id)}
+                        dragging={this.props.dragging}
                       />
                     ))}
                 </td>

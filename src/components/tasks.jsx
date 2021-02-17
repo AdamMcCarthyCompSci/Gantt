@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Rnd } from "react-rnd";
 import moment from "moment";
+import TextField from "@material-ui/core/TextField";
 
 class Tasks extends Component {
   state = {
@@ -11,6 +12,10 @@ class Tasks extends Component {
     mouseColumn: "",
     mouseRow: "",
     mousingOver: false,
+    name: this.props.name,
+    description: this.props.description,
+    dragging: this.props.dragging,
+    liveWidth: 40
   };
 
   onTrigger = () => {
@@ -52,18 +57,58 @@ class Tasks extends Component {
     this.setState({ mousingOver }, this.onTrigger);
   };
 
+  // handleNameEdit = (event) => {
+  //   this.setState({ name: event }, console.log(this.state.name));
+  // };
+
+  onNameTrigger = () => {
+    const childData = {
+      name: this.props.name,
+      description: this.props.description,
+      id: this.props.id,
+      highlighted: this.props.id,
+      dragging: this.props.dragging,
+    };
+    // console.log("trigger",this.state.dragging)
+    this.props.nameCallback(childData);
+  };
+
+  titleLength = (width) => {
+    let remainder =
+      this.props.name.length -
+      (width / 40) * 3 -
+      (width / 40 - 1);
+    if (remainder <= 0) {
+      return this.props.name;
+    } else {
+      return this.props.name.slice(0, -remainder).concat("...");
+    }
+  };
+
+  updateWidth = (newWidth) => {
+    return newWidth;
+  };
+
   render() {
     const { width, height, x, y } = this.state;
-    const { row, column } = this.props;
+    const { row, column, highlighted } = this.props;
     return (
       <React.Fragment>
+        {this.props.updateTask(
+          this.props.id,
+          this.props.name,
+          this.props.description
+        )}
         <Rnd
+          onClick={() => {
+            this.onNameTrigger();
+          }}
           onMouseEnter={() => {
             this.handleMouseOver(column, row, x, y);
           }}
-          onMouseOver={() => {
-            this.handleMouseOver(column, row, x, y);
-          }}
+          // onMouseOver={() => {
+          //   this.handleMouseOver(column, row, x, y);
+          // }}
           onMouseLeave={() => {
             this.handleMouseLeave();
           }}
@@ -71,7 +116,7 @@ class Tasks extends Component {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            border: "solid 1px #ddd",
+            border: highlighted,
             background: "#0E5A8A",
             borderRadius: "5px",
           }}
@@ -89,13 +134,34 @@ class Tasks extends Component {
             this.handleMouseLeave();
             this.onTrigger();
           }}
+          // onResize={(ref) => {
+          //     this.updateWidth(Math.round(ref.offsetWidth / 40) * 40)
+          //   }}
+          onResizeStart={() => {
+            this.setState({ dragging: true }, this.onNameTrigger);
+            // console.log("start",this.state.dragging);
+          }}
+          onResize={(e, direction, ref, delta, position) => {
+            // let liveWidth = Math.round(ref.offsetWidth / 40) * 40
+            // window.liveWidth = Math.round(ref.offsetWidth / 40) * 40
+            // console.log(window.liveWidth)
+            const liveWidth = Math.round(ref.offsetWidth / 40) * 40
+            this.setState({liveWidth})
+            // console.log(liveWidth)
+            //   this.titleLength(liveWidth)
+          }}
           onResizeStop={(e, direction, ref, delta, position) => {
-            this.setState({
-              width: Math.round(ref.offsetWidth / 40) * 40,
-              ...position,
-            });
             this.handleMouseLeave();
+            this.setState(
+              {
+                width: Math.round(ref.offsetWidth / 40) * 40,
+                ...position,
+                dragging: false,
+              },
+              this.onNameTrigger
+            );
             this.onTrigger();
+            // console.log("stop",this.state.dragging);
           }}
           enableResizing={{
             top: false,
@@ -108,7 +174,15 @@ class Tasks extends Component {
             topLeft: false,
           }}
         >
-          Test
+          {this.titleLength(this.state.liveWidth)}
+          {/* <TextField
+            id="outlined-basic"
+            value={this.state.name}
+            onChange={(event) => {
+              this.handleNameEdit(event.target.value);
+            }}
+            variant="outlined"
+          /> */}
         </Rnd>
       </React.Fragment>
     );

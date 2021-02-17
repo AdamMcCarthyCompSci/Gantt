@@ -16,6 +16,11 @@ class Gantt extends Component {
     startTime: { value: 0, count: 1 },
     start: { value: 1, count: 1 },
     endTime: { value: 0, count: 2 },
+    name: "",
+    description: "",
+    id: 0,
+    highlighted: "",
+    dragging: false
   };
 
   componentDidMount() {
@@ -91,6 +96,8 @@ class Gantt extends Component {
   };
 
   colourChangeOn = (cellKey, activeRow, widthCount) => {
+    // if (!this.state.dragging) {
+      // console.log("colour",this.state.dragging)
     const days = [...this.state.days];
     let index = days.findIndex((day) => day.value === cellKey);
     if (widthCount > 0) {
@@ -105,21 +112,27 @@ class Gantt extends Component {
       }
     } else {
       const cell = { ...days[index] };
+      if (cell.background !== "#4f5b66") {
       cell.background = "#4f5b66";
       days[index] = cell;
       const rows = { ...this.state.rows };
       rows.active = activeRow;
       this.setState({ days, rows });
     }
+  }
+  // }
   };
 
   colourChangeOff = (cellKey, activeRow) => {
+    // if (this.state.dragging === false) {
+      // console.log("off",this.state.dragging)
     const days = [...this.state.days];
     const index = days.findIndex((day) => day.value === cellKey);
     const cell = { ...days[index] };
     cell.background = "";
     days[index] = cell;
     this.setState({ days });
+    // }
   };
 
   allColoursOff = () => {
@@ -130,25 +143,29 @@ class Gantt extends Component {
     this.setState({ days });
   };
 
-  taskColourChangeOn = (cellKey, activeRow) => {
-    const days = [...this.state.days];
-    const index = days.findIndex((day) => day.value === cellKey);
-    const cell = { ...days[index] };
-    cell.background = "#4f5b66";
-    days[index] = cell;
-    const rows = { ...this.state.rows };
-    rows.active = activeRow;
-    this.setState({ days, rows });
-  };
+  // taskColourChangeOn = (cellKey, activeRow) => {
+  //   const days = [...this.state.days];
+  //   const index = days.findIndex((day) => day.value === cellKey);
+  //   const cell = { ...days[index] };
+  //   cell.background = "#4f5b66";
+  //   days[index] = cell;
+  //   const rows = { ...this.state.rows };
+  //   rows.active = activeRow;
+  //   this.setState({ days, rows });
+  // };
 
-  taskColourChangeOff = (cellKey, activeRow) => {
-    const days = [...this.state.days];
-    const index = days.findIndex((day) => day.value === cellKey);
-    const cell = { ...days[index] };
-    cell.background = "";
-    days[index] = cell;
-    this.setState({ days });
-  };
+  // taskColourChangeOff = (cellKey, activeRow) => {
+  //   const days = [...this.state.days];
+  //   const index = days.findIndex((day) => day.value === cellKey);
+  //   const cell = { ...days[index] };
+  //   cell.background = "";
+  //   days[index] = cell;
+  //   this.setState({ days });
+  // };
+
+  handleNameCallback = (childData) => {
+    this.setState({ name: childData.name, description: childData.description, id: childData.id, highlighted: childData.highlighted, dragging: childData.dragging })
+  }
 
   render() {
     const { days, months, rows } = this.state;
@@ -185,12 +202,18 @@ class Gantt extends Component {
               allColoursOff={this.allColoursOff}
               taskColourChangeOn={this.taskColourChangeOn}
               taskColourChangeOff={this.taskColourChangeOff}
+              nameCallback={this.handleNameCallback}
+              name={this.state.name}
+              description={this.state.description}
+              id={this.state.id}
+              highlighted={this.state.highlighted}
+              dragging={this.state.dragging}
               className="tableBoundary"
             />
           </div>
         </Grid>
         <Grid item xs={12} style={{ marginTop: "500px" }}>
-          <Details />
+          <Details name={this.state.name} description={this.state.description} id={this.state.id} highlighted={this.state.highlighted} nameCallback={this.handleNameCallback}/>
         </Grid>
       </Grid>
     );
