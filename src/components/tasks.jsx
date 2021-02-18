@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Rnd } from "react-rnd";
 import moment from "moment";
-import TextField from "@material-ui/core/TextField";
 
 class Tasks extends Component {
   state = {
@@ -30,17 +29,17 @@ class Tasks extends Component {
       mousingOver: this.state.mousingOver,
     };
     if (liveWidth !== "") {
-      childData.width = liveWidth
+      childData.width = liveWidth;
     }
     this.props.parentCallback(childData);
   };
 
   onDragTrigger = (boolean) => {
     const childData = {
-      dragging: boolean
-    }
-    this.props.dragCallback(childData)
-  }
+      dragging: boolean,
+    };
+    this.props.dragCallback(childData);
+  };
 
   handleMouseOver = (column, row, x, y) => {
     this.props.allColoursOff();
@@ -67,10 +66,6 @@ class Tasks extends Component {
     this.setState({ mousingOver }, this.onTrigger);
   };
 
-  // handleNameEdit = (event) => {
-  //   this.setState({ name: event }, console.log(this.state.name));
-  // };
-
   onNameTrigger = () => {
     const childData = {
       name: this.props.name,
@@ -79,7 +74,6 @@ class Tasks extends Component {
       highlighted: this.props.id,
       dragging: this.props.dragging,
     };
-    // console.log("trigger",this.state.dragging)
     this.props.nameCallback(childData);
   };
 
@@ -112,16 +106,12 @@ class Tasks extends Component {
             this.onNameTrigger();
           }}
           onMouseEnter={() => {
-            // this.handleMouseLeave()
-            this.handleMouseOver(column, row, x, y)
+            this.handleMouseOver(column, row, x, y);
             this.onTrigger();
           }}
-          // onMouseOver={() => {
-          //   this.handleMouseOver(column, row, x, y);
-          // }}
           onMouseLeave={() => {
             this.handleMouseLeave();
-            this.onTrigger()
+            this.onTrigger();
           }}
           style={{
             display: "flex",
@@ -139,55 +129,40 @@ class Tasks extends Component {
             this.onTrigger();
           }}
           onDrag={() => {
-            this.handleMouseLeave()
-            this.onDragTrigger(true)
+            this.handleMouseLeave();
+            this.onDragTrigger(true);
           }}
           onDragStop={(e, d) => {
             const currentX = Math.round(d.x / 40) * 40;
             const currentY = Math.round(d.y / 30) * 30;
             this.setState({ x: currentX, y: currentY });
             this.handleMouseLeave();
-            this.onDragTrigger(false)
-            this.onTrigger()
-            this.handleMouseOver(column, row, x, y)
+            this.onDragTrigger(false);
+            this.onTrigger();
+            this.handleMouseOver(column, row, x, y);
           }}
-          dragGrid={[40,30]}
-          // onResize={(ref) => {
-          //     this.updateWidth(Math.round(ref.offsetWidth / 40) * 40)
-          //   }}
-          // onResizeStart={() => {
-          //   this.setState({ dragging: true }, this.onNameTrigger);
-          //   // console.log("start",this.state.dragging);
-          // }}
+          dragGrid={[40, 30]}
           onResize={(e, direction, ref, delta, position) => {
-            // let liveWidth = Math.round(ref.offsetWidth / 40) * 40
-            // window.liveWidth = Math.round(ref.offsetWidth / 40) * 40
-            // console.log(window.liveWidth)
             const liveWidth = Math.round(ref.offsetWidth / 40) * 40;
             if (liveWidth !== this.state.liveWidth) {
-              this.setState({ liveWidth })
-              this.handleMouseLeave()
-              this.onDragTrigger(true)
+              this.setState({ liveWidth });
+              this.handleMouseLeave();
+              this.onDragTrigger(true);
             }
-            // console.log(liveWidth)
-            //   this.titleLength(liveWidth)
           }}
-          resizeGrid = {[40,30]}
+          resizeGrid={[40, 30]}
           onResizeStop={(e, direction, ref, delta, position) => {
             this.handleMouseLeave();
-            this.setState(
-              {
-                width: Math.round(ref.offsetWidth / 40) * 40,
-                ...position,
-                dragging: false,
-              }
-            );
-            this.handleMouseLeave()
-            this.onNameTrigger()
-            this.onDragTrigger(false)
-            this.onTrigger()
-            this.handleMouseOver(column, row, x, y)
-            // console.log("stop",this.state.dragging);
+            this.setState({
+              width: Math.round(ref.offsetWidth / 40) * 40,
+              ...position,
+              dragging: false,
+            });
+            this.handleMouseLeave();
+            this.onNameTrigger();
+            this.onDragTrigger(false);
+            this.onTrigger();
+            this.handleMouseOver(column, row, x, y);
           }}
           enableResizing={{
             top: false,
@@ -201,14 +176,6 @@ class Tasks extends Component {
           }}
         >
           {this.titleLength(this.state.liveWidth)}
-          {/* <TextField
-            id="outlined-basic"
-            value={this.state.name}
-            onChange={(event) => {
-              this.handleNameEdit(event.target.value);
-            }}
-            variant="outlined"
-          /> */}
         </Rnd>
       </React.Fragment>
     );

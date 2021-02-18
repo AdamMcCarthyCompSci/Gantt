@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import moment from "moment";
+import TaskTable from "./taskTable";
 import CalendarTable from "./calendarTable";
 import AddRow from "./addRow";
 import Left from "./left";
 import Right from "./right";
 import Details from "./details";
-import AddBoxIcon from "@material-ui/icons/AddBox";
 import Grid from "@material-ui/core/Grid";
+import { ScrollSync, ScrollSyncPane } from "react-scroll-sync";
 
 class Gantt extends Component {
   state = {
@@ -21,7 +22,7 @@ class Gantt extends Component {
     id: 0,
     highlighted: "",
     dragging: false,
-    drag: false
+    drag: false,
   };
 
   componentDidMount() {
@@ -98,41 +99,39 @@ class Gantt extends Component {
 
   colourChangeOn = (cellKey, activeRow, widthCount) => {
     if (!this.state.drag) {
-      // console.log("colour",this.state.dragging)
-    const days = [...this.state.days];
-    let index = days.findIndex((day) => day.value === cellKey);
-    if (widthCount > 0) {
-      for (let i = 0; i < widthCount; i++) {
+      const days = [...this.state.days];
+      let index = days.findIndex((day) => day.value === cellKey);
+      if (widthCount > 0) {
+        for (let i = 0; i < widthCount; i++) {
+          const cell = { ...days[index] };
+          cell.background = "#4f5b66";
+          days[index] = cell;
+          const rows = { ...this.state.rows };
+          rows.active = activeRow;
+          index++;
+          this.setState({ days, rows });
+        }
+      } else {
         const cell = { ...days[index] };
-        cell.background = "#4f5b66";
-        days[index] = cell;
-        const rows = { ...this.state.rows };
-        rows.active = activeRow;
-        index++;
-        this.setState({ days, rows });
+        if (cell.background !== "#4f5b66") {
+          cell.background = "#4f5b66";
+          days[index] = cell;
+          const rows = { ...this.state.rows };
+          rows.active = activeRow;
+          this.setState({ days, rows });
+        }
       }
-    } else {
-      const cell = { ...days[index] };
-      if (cell.background !== "#4f5b66") {
-      cell.background = "#4f5b66";
-      days[index] = cell;
-      const rows = { ...this.state.rows };
-      rows.active = activeRow;
-      this.setState({ days, rows });
     }
-  }
-  }
   };
 
   colourChangeOff = (cellKey, activeRow) => {
     if (!this.state.drag) {
-      // console.log("off",this.state.dragging)
-    const days = [...this.state.days];
-    const index = days.findIndex((day) => day.value === cellKey);
-    const cell = { ...days[index] };
-    cell.background = "";
-    days[index] = cell;
-    this.setState({ days });
+      const days = [...this.state.days];
+      const index = days.findIndex((day) => day.value === cellKey);
+      const cell = { ...days[index] };
+      cell.background = "";
+      days[index] = cell;
+      this.setState({ days });
     }
   };
 
@@ -144,82 +143,103 @@ class Gantt extends Component {
     this.setState({ days });
   };
 
-  // taskColourChangeOn = (cellKey, activeRow) => {
-  //   const days = [...this.state.days];
-  //   const index = days.findIndex((day) => day.value === cellKey);
-  //   const cell = { ...days[index] };
-  //   cell.background = "#4f5b66";
-  //   days[index] = cell;
-  //   const rows = { ...this.state.rows };
-  //   rows.active = activeRow;
-  //   this.setState({ days, rows });
-  // };
-
-  // taskColourChangeOff = (cellKey, activeRow) => {
-  //   const days = [...this.state.days];
-  //   const index = days.findIndex((day) => day.value === cellKey);
-  //   const cell = { ...days[index] };
-  //   cell.background = "";
-  //   days[index] = cell;
-  //   this.setState({ days });
-  // };
-
   handleNameCallback = (childData) => {
-    this.setState({ name: childData.name, description: childData.description, id: childData.id, highlighted: childData.highlighted, dragging: childData.dragging })
-  }
+    this.setState({
+      name: childData.name,
+      description: childData.description,
+      id: childData.id,
+      highlighted: childData.highlighted,
+      dragging: childData.dragging,
+    });
+  };
 
   handleDragCallback = (childData) => {
-    this.setState({drag: childData.dragging})
-  }
+    this.setState({ drag: childData.dragging });
+  };
 
   render() {
     const { days, months, rows } = this.state;
 
     return (
       <Grid container spacing={0}>
-        <Grid item xs={6}>
-          <Left addLeft={this.addLeft} />
-        </Grid>
-        <Grid item xs={6}>
-          <Right addRight={this.addRight} />
-        </Grid>
-        <Grid item xs={1}>
+        <Grid item xs={2}>
           <AddRow handleAddRows={this.handleAddRows} />
         </Grid>
-        <Grid item xs={11}>
-          <div
-            style={{
-              height: "500px",
-              width: "91.777%",
-              overflow: "scroll",
-              backgroundColor: "gray",
-              position: "absolute",
-              display: "flex",
-            }}
-            className="boundary"
-          >
-            <CalendarTable
-              days={days}
-              months={months}
-              rows={rows}
-              colourChangeOn={this.colourChangeOn}
-              colourChangeOff={this.colourChangeOff}
-              allColoursOff={this.allColoursOff}
-              taskColourChangeOn={this.taskColourChangeOn}
-              taskColourChangeOff={this.taskColourChangeOff}
-              nameCallback={this.handleNameCallback}
-              name={this.state.name}
-              description={this.state.description}
-              id={this.state.id}
-              highlighted={this.state.highlighted}
-              dragging={this.state.dragging}
-              dragCallback={this.handleDragCallback}
-              className="tableBoundary"
-            />
-          </div>
+        <Grid item xs={5}>
+          <Left addLeft={this.addLeft} />
         </Grid>
-        <Grid item xs={12} style={{ marginTop: "500px" }}>
-          <Details name={this.state.name} description={this.state.description} id={this.state.id} highlighted={this.state.highlighted} nameCallback={this.handleNameCallback}/>
+        <Grid item xs={5}>
+          <Right addRight={this.addRight} />
+        </Grid>
+        <Grid container spacing={0}>
+          <ScrollSync>
+            <div>
+              <Grid item xs={2}>
+                <ScrollSyncPane>
+                  <div
+                    class="disablescrollbars"
+                    style={{
+                      position: "absolute",
+                      height: "500px",
+                      backgroundColor: "gray",
+                      height: "500px",
+                      display: "flex",
+                      overflow: "auto",
+                      width: "16.66%",
+                      overflow: "scroll",
+                    }}
+                  >
+                    <TaskTable days={days} months={months} rows={rows} />
+                  </div>
+                </ScrollSyncPane>
+              </Grid>
+              <Grid item xs={10}>
+                <ScrollSyncPane>
+                  <div
+                    style={{
+                      height: "500px",
+                      width: "83.3333%",
+                      overflow: "scroll",
+                      backgroundColor: "gray",
+                      position: "absolute",
+                      display: "flex",
+                      right: 0,
+                    }}
+                    className="boundary"
+                  >
+                    <CalendarTable
+                      days={days}
+                      months={months}
+                      rows={rows}
+                      colourChangeOn={this.colourChangeOn}
+                      colourChangeOff={this.colourChangeOff}
+                      allColoursOff={this.allColoursOff}
+                      taskColourChangeOn={this.taskColourChangeOn}
+                      taskColourChangeOff={this.taskColourChangeOff}
+                      nameCallback={this.handleNameCallback}
+                      name={this.state.name}
+                      description={this.state.description}
+                      id={this.state.id}
+                      highlighted={this.state.highlighted}
+                      dragging={this.state.dragging}
+                      dragCallback={this.handleDragCallback}
+                      className="tableBoundary"
+                    />
+                  </div>
+                </ScrollSyncPane>
+              </Grid>
+            </div>
+          </ScrollSync>
+        </Grid>
+        <Grid item xs={2}></Grid>
+        <Grid item xs={10} style={{ marginTop: "500px" }}>
+          <Details
+            name={this.state.name}
+            description={this.state.description}
+            id={this.state.id}
+            highlighted={this.state.highlighted}
+            nameCallback={this.handleNameCallback}
+          />
         </Grid>
       </Grid>
     );

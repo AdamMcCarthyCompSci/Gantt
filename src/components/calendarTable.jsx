@@ -10,7 +10,7 @@ class CalendarTable extends Component {
       mouseColumn: "",
       mouseRow: "",
       id: "",
-      mousingOver: false
+      mousingOver: false,
     },
     highlighted: this.props.highlighted,
   };
@@ -26,7 +26,7 @@ class CalendarTable extends Component {
       height: 30,
       id: taskCount,
       name: "",
-      description: ""
+      description: "",
     };
     let counter = 0;
     for (let i = 0; i < tasks.length; i++) {
@@ -89,7 +89,6 @@ class CalendarTable extends Component {
     this.setState({ mouseOverTask });
   };
 
-
   handleColourChange = (data, axis) => {
     if (this.state.mouseOverTask.mousingOver) {
       return this.state.mouseOverTask[axis];
@@ -106,49 +105,44 @@ class CalendarTable extends Component {
     }
   };
 
-  // updateTaskName = () => {
-  //   if (this.getStateValue(this.props.id, "name") != this.props.name)
-  //   this.updateTaskState(this.props.id, "name", this.props.name)
-  // }
-
   updateTaskName = (id, name, description) => {
-    if (this.getStateValue(id, "name") != name || this.getStateValue(id, "description") != description) {
-    const tasks = [...this.state.tasks];
-    const index = this.getTasksIndex(id);
-    const task = { ...tasks[index] };
-    task.name = name;
-    task.description = description
-    tasks[index] = task;
-    this.setState({ tasks });
+    if (
+      this.getStateValue(id, "name") != name ||
+      this.getStateValue(id, "description") != description
+    ) {
+      const tasks = [...this.state.tasks];
+      const index = this.getTasksIndex(id);
+      const task = { ...tasks[index] };
+      task.name = name;
+      task.description = description;
+      tasks[index] = task;
+      this.setState({ tasks });
     }
-  }
+  };
 
   getName = (id, property) => {
     if (this.props.id === id) {
-      return this.props[property]
+      return this.props[property];
+    } else {
+      return this.getStateValue(id, property);
     }
-    else {
-      return this.getStateValue(id, property)
-    }
-  }
+  };
 
   getDescription = (id) => {
     if (this.props.id === id) {
-      return this.props.description
+      return this.props.description;
+    } else {
+      return this.getStateValue(id, "description");
     }
-    else {
-      return this.getStateValue(id, "description")
-    }
-  }
+  };
 
   isHighlighted = (id) => {
     if (this.props.highlighted == id) {
-      return "solid 1px #ddd"
+      return "solid 1px #ddd";
+    } else {
+      return "solid 3px #0E5A8A";
     }
-    else {
-      return "solid 3px #0E5A8A"
-    }
-  }
+  };
 
   render() {
     const {
