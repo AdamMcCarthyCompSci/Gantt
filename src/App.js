@@ -1,21 +1,16 @@
-import React, { Component } from "react";
-import { Route, Redirect, Switch } from "react-router-dom";
-import Gantt from "./components/gantt";
-import NotFound from "./components/notFound";
-import "./App.css";
+import './App.css';
+import { IncrementRows } from './features/table/IncrementRows';
+import { IncrementMonths } from './features/table/IncrementMonths';
+import { Table } from './features/table/Table';
+import "@fontsource/roboto";
 
 function App() {
   return (
-    <React.Fragment>
-      <main>
-        <Switch>
-          <Route path="/gantt" component={Gantt}></Route>
-          <Route path="/not-found" component={NotFound}></Route>
-          <Redirect from="/" exact to="/gantt" />
-          <Redirect to="/not-found" />
-        </Switch>
-      </main>
-    </React.Fragment>
+    <div className="App">
+      <IncrementRows />
+      <IncrementMonths />
+      <Table/>
+    </div>
   );
 }
 

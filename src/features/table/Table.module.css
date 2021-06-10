@@ -1,0 +1,83 @@
+table, td {
+    border: 1px solid white;
+    border-collapse: collapse;
+    align-items: center;
+    justify-content: center;
+}
+.month {
+    background-color: #1d3e53;
+    transition: 0.1s;
+    text-align: center;
+}
+.month:hover {
+    background-color: #0d7377;
+}
+.today {
+    background-color: #77abb7;
+    transition: 0.1s;
+    min-width: 50px;
+    max-width: 50px;
+}
+.today:hover {
+    background-color: #0d7377;
+}
+.weekend {
+    background-color: #476d7c;
+    transition: 0.1s;
+    min-width: 50px;
+    max-width: 50px;
+}
+.weekend:hover {
+    background-color: #0d7377;
+}
+.weekday {
+    background-color: #254b62;
+    transition: 0.1s;
+    min-width: 50px;
+    max-width: 50px;
+}
+.weekday:hover {
+    background-color: #0d7377;
+}
+.evenRow {
+    background-color: #525252;
+    position: relative;
+    /* border-radius: 2px;    */
+    transition: 0.1s;
+    width: 50px;
+    height: 30px;
+}
+.oddRow {
+    background-color: #414141;
+    position: relative;
+    /* border-radius: 2px; */
+    transition: 0.1s;
+    width: 50px;
+    height: 30px;
+}
+
+.tableContainer {
+    width: 100%;
+    overflow: scroll;
+}
+
+.evenRow:hover, .oddRow:hover {
+    background-color: rgba(13, 115, 119, 0.5) !important;
+}
+
+table>tbody>tr>td {
+    position: relative;
+    /* border-radius: 2px; */
+    text-align: center;
+}
+
+.task {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 33px;
+    border-color: white;
+    background-color: #0E5A8A;
+    z-index: 100;
+    min-height: 33px;
+}
