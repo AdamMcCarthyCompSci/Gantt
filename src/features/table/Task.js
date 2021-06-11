@@ -24,19 +24,20 @@ export function Task({index, row}) {
     return (
             <Rnd className={styles.task}
         onDragStop={(e, d) => {
-            const currentX = Math.round(d.x / 50);
-            const currentY = Math.round(d.y / 30);
+            const currentX = Math.round(d.x / 55);
+            const currentY = Math.round(d.y / 35);
             if (currentX != 0 || currentY != 0) {
                 dispatch(dragTask({index: index, row: row, x: currentX, y: currentY}));
             } 
         }}
         onResizeStop={(e, direction, ref, delta, position) => {
-            dispatch(resizeTask({index: index, row: row, width: ref.style.width}));
+            const resizeChange = Math.round(delta.width / 55);
+            dispatch(resizeTask({index: index, row: row, width: ref.style.width, resizeChange: resizeChange, direction: direction}));
             }}
           bounds=".ganttBody"
-          dragGrid={[53, 33]}
-          resizeGrid={[53, 33]}
-          size={{ width: getWidth() , height: 33 }}
+          dragGrid={[55, 35]}
+          resizeGrid={[55, 35]}
+          size={{ width: getWidth() , height: 35 }}
           enableResizing={{
             top: false,
             right: true,

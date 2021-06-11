@@ -28,7 +28,9 @@ export const slice = createSlice({
       state.rowCount += 1;
     },
     decrement: state => {
-      state.rowCount -= 1;
+      if (state.rowCount > 0) {
+        state.rowCount -= 1;
+      }
     },
     futureMonth: state => {
       state.monthCount += 1;
@@ -66,14 +68,15 @@ export const slice = createSlice({
       const isTask = (task) =>  ((task.index).isSame(action.payload.index) && task.row == action.payload.row);
       const taskIndex = state.tasks.findIndex(isTask);
       let task = state.tasks[taskIndex];
+      console.log("index: ", action.payload.index, " row: ", action.payload.row, " x: ", action.payload.x, " y: ", action.payload.y);
       if (task == undefined) {
         console.log("Task not found!", taskIndex);
       }
       if (action.payload.x > 0) {
-        task.index = moment(task.index).add(Math.abs(action.payload.x), "days");
+        state.tasks[taskIndex].index = moment(task.index).add(Math.abs(action.payload.x), "days");
       }
       else if (action.payload.x < 0) {
-        task.index = moment(task.index).subtract(Math.abs(action.payload.x), "days");
+        state.tasks[taskIndex].index = moment(task.index).subtract(Math.abs(action.payload.x), "days");
       }
       if (action.payload.y > 0) {
         task.row += action.payload.y;
@@ -81,10 +84,9 @@ export const slice = createSlice({
       else if (action.payload.y < 0) {
         task.row += action.payload.y;
       }
-      console.log(action.payload.x, action.payload.y)
-      console.log(task.index, task.row)
       state.tasks[taskIndex].index = task.index;
       state.tasks[taskIndex].row = task.row;
+      console.log("newIndex: ", state.tasks[taskIndex].index, "newRow: ", state.tasks[taskIndex].row);
     },
     resizeTask: (state, action) => {
       const isTask = (task) =>  ((task.index).isSame(action.payload.index) && task.row == action.payload.row);
@@ -94,6 +96,9 @@ export const slice = createSlice({
         console.log("Task not found!", taskIndex);
       }
       state.tasks[taskIndex].width = action.payload.width;
+      if (action.payload.direction == "left") {
+        state.tasks[taskIndex].index = moment(task.index).subtract(Math.abs(action.payload.resizeChange), "days");
+      }
     }
   },
 });

@@ -17,30 +17,30 @@ import { Task } from './Task';
 const checkWeekend = (date, currentDay) => {
   if (moment(date).isSame(currentDay)) {
     return (
-      <td className={styles.today} key={date}>
+      <th className={styles.today} key={date}>
         {date.format("Do")}
-      </td>)
+      </th>)
   }
   else if (date.format("d") == 0 || date.format("d") == 6) {
     return (
-    <td className={styles.weekend} key={date}>
+    <th className={styles.weekend} key={date}>
       {date.format("Do")}
-    </td>)
+    </th>)
   }
   else {
     return (
-      <td className={styles.weekday} key={date}>
+      <th className={styles.weekday} key={date}>
         {date.format("Do")}
-      </td> )
+      </th> )
   }
 }
 
 const checkMonth = (date) => {
   if(moment(date).format("D") == 1) {
     return (
-      <td className={styles.month} key={date} colSpan={date.daysInMonth()}>
+      <th className={styles.month} key={date} colSpan={date.daysInMonth()}>
         {date.format("MMMM YYYY")}
-      </td>
+      </th>
     );
   }
   else {
@@ -98,9 +98,8 @@ export function Table() {
   }
 
   return (
-    <div>
-      <div className={styles.tableContainer}>
-      <table>
+      <div className={styles.mainTableContainer}>
+      <table className={styles.mainTable}>
         <thead>
             <tr>
           {days.map((date) => (
@@ -115,7 +114,7 @@ export function Table() {
           </thead>
           <tbody className="ganttBody">
             {[...Array(count)].map((index, row) => (
-                <tr className={styles.row}>
+                <tr>
                   {days.map((index, date) => (
                     checkRow(date, index, row)
                   ))}
@@ -124,6 +123,5 @@ export function Table() {
             </tbody>
       </table>
       </div>
-    </div>
   );
 }

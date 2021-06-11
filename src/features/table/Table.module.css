@@ -1,13 +1,19 @@
 table, td {
-    border: 1px solid white;
-    border-collapse: collapse;
+    border-bottom: 1px solid white;
+    border-right: 1px solid white;
+    border-collapse: separate;
     align-items: center;
     justify-content: center;
+    text-align: center;
 }
 .month {
     background-color: #1d3e53;
     transition: 0.1s;
-    text-align: center;
+    width: 100%;
+    position: sticky;
+    z-index: 3;
+    border-bottom: 1px solid white;
+    border-right: 1px solid white;
 }
 .month:hover {
     background-color: #0d7377;
@@ -17,6 +23,10 @@ table, td {
     transition: 0.1s;
     min-width: 50px;
     max-width: 50px;
+    position: sticky;
+    z-index: 3;
+    border-bottom: 1px solid white;
+    border-right: 1px solid white;
 }
 .today:hover {
     background-color: #0d7377;
@@ -26,6 +36,10 @@ table, td {
     transition: 0.1s;
     min-width: 50px;
     max-width: 50px;
+    position: sticky;
+    z-index: 3;
+    border-bottom: 1px solid white;
+    border-right: 1px solid white;
 }
 .weekend:hover {
     background-color: #0d7377;
@@ -35,16 +49,22 @@ table, td {
     transition: 0.1s;
     min-width: 50px;
     max-width: 50px;
+    position: sticky;
+    z-index: 3;
+    border-bottom: 1px solid white;
+    border-right: 1px solid white;
 }
 .weekday:hover {
     background-color: #0d7377;
 }
+
 .evenRow {
     background-color: #525252;
     position: relative;
     /* border-radius: 2px;    */
     transition: 0.1s;
-    width: 50px;
+    min-width: 50px;
+    max-width: 50px;
     height: 30px;
 }
 .oddRow {
@@ -52,15 +72,58 @@ table, td {
     position: relative;
     /* border-radius: 2px; */
     transition: 0.1s;
-    width: 50px;
+    min-width: 50px;
+    max-width: 50px;
     height: 30px;
 }
 
-.tableContainer {
-    width: 100%;
-    overflow: scroll;
+.leftHeader {
+    width: 16.66%;
+    background-color: #1d3e53;
+    transition: 0.1s;
+    position: sticky;
+    z-index: 3;
+    border-bottom: 1px solid white;
+    border-right: 1px solid white;
+
 }
 
+.leftRow {
+    background-color: #0d7377;
+    width: 100%;
+    position: relative;
+    transition: 0.1s;
+    height: 30px;
+    border-bottom: 1px solid white;
+    border-right: 1px solid white;
+}
+
+.mainTableContainer {
+    width: 83.333%;
+    height: 500px;
+    overflow: scroll;
+    position: absolute;
+}
+.mainTable {
+    position: absolute;
+}
+.leftTableContainer {
+    width: 100%;
+    height: 500px;
+    overflow: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE 10+ */
+    position: absolute;
+}
+.leftTable {
+    width: 16.666%;
+    position: absolute;
+}
+
+.leftTableContainer::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* Chrome/Safari/Webkit */
+}
 .evenRow:hover, .oddRow:hover {
     background-color: rgba(13, 115, 119, 0.5) !important;
 }
@@ -75,9 +138,17 @@ table>tbody>tr>td {
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 33px;
-    border-color: white;
+    line-height: 25px;
     background-color: #0E5A8A;
-    z-index: 100;
-    min-height: 33px;
+    z-index: 2;
+    min-height: 30px;
+    max-height: 30px;
 }
+thead tr:nth-child(1) th {
+    position: sticky;
+    top: 0;
+  }
+thead tr:nth-child(2) th {
+    position: sticky;
+    top: 22px;
+  }
