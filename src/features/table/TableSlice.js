@@ -21,7 +21,8 @@ export const slice = createSlice({
     firstOfMonth: moment(firstOfMonth),
     monthCount: 0,
     days: days,
-    tasks: []
+    tasks: [],
+    selectedTask: {selected: false, name: "", desc: "", index: moment(), row: ""}
   },
   reducers: {
     increment: state => {
@@ -57,18 +58,17 @@ export const slice = createSlice({
       state.days = pastMonthDays.concat(state.days);
     },
     createTask: (state, action) => {
-      if (state.tasks.find(task => (task.index).isSame(action.payload.index) && task.row == action.payload.row)) {
-        
+      if (state.tasks.find(task => (task.index).isSame(action.payload.index, "day") && task.row == action.payload.row)) {
+        console.log("Task already exists in this cell!");
       }
       else {
         state.tasks.push(action.payload)
       }
     },
     dragTask: (state, action) => {
-      const isTask = (task) =>  ((task.index).isSame(action.payload.index) && task.row == action.payload.row);
+      const isTask = (task) =>  ((task.index).isSame(action.payload.index, "day") && task.row == action.payload.row);
       const taskIndex = state.tasks.findIndex(isTask);
       let task = state.tasks[taskIndex];
-      console.log("index: ", action.payload.index, " row: ", action.payload.row, " x: ", action.payload.x, " y: ", action.payload.y);
       if (task == undefined) {
         console.log("Task not found!", taskIndex);
       }
@@ -86,28 +86,53 @@ export const slice = createSlice({
       }
       state.tasks[taskIndex].index = task.index;
       state.tasks[taskIndex].row = task.row;
-      console.log("newIndex: ", state.tasks[taskIndex].index, "newRow: ", state.tasks[taskIndex].row);
     },
     resizeTask: (state, action) => {
-      const isTask = (task) =>  ((task.index).isSame(action.payload.index) && task.row == action.payload.row);
+      const isTask = (task) =>  ((task.index).isSame(action.payload.index, "day") && task.row == action.payload.row);
       const taskIndex = state.tasks.findIndex(isTask);
       let task = state.tasks[taskIndex];
       if (task == undefined) {
         console.log("Task not found!", taskIndex);
       }
       state.tasks[taskIndex].width = action.payload.width;
+      console.log(action.payload.width)
       if (action.payload.direction == "left") {
         state.tasks[taskIndex].index = moment(task.index).subtract(Math.abs(action.payload.resizeChange), "days");
       }
+    },
+    selectTask: (state, action) => {
+      if ((state.selectedTask.index).isSame(action.payload.index, "day") && state.selectedTask.row == action.payload.row) {
+        state.selectedTask = {selected: false, name: "", desc: "", index: moment(), row: ""}
+
+      }
+      else {
+        state.selectedTask = {selected: true, name: action.payload.name, desc: action.payload.desc, index: action.payload.index, row: action.payload.row};
+      }
+    },
+    renameTask: (state, action) => {
+      state.selectedTask.name = action.payload.name;
+      const isTask = (task) =>  ((task.index).isSame(state.selectedTask.index, "day") && task.row == state.selectedTask.row);
+      const taskIndex = state.tasks.findIndex(isTask);
+      state.tasks[taskIndex].name = action.payload.name;
+    },
+    descTask: (state, action) => {
+      state.selectedTask.desc = action.payload.desc;
+      const isTask = (task) =>  ((task.index).isSame(state.selectedTask.index, "day") && task.row == state.selectedTask.row);
+      const taskIndex = state.tasks.findIndex(isTask);
+      state.tasks[taskIndex].desc = action.payload.desc;
+    },
+    createTheme: (state, action) => {
+
     }
   },
 });
 
-export const { increment, decrement, futureMonth, pastMonth, createTask, dragTask, resizeTask } = slice.actions;
+export const { increment, decrement, futureMonth, pastMonth, createTask, dragTask, resizeTask, selectTask, renameTask, descTask, createTheme } = slice.actions;
 
 export const rowCountTable = state => state.table.rowCount;
 export const currentDayTable = state => state.table.currentDay;
 export const daysTable = state => state.table.days;
 export const tasksTable = state => state.table.tasks;
+export const selectedTaskTable = state => state.table.selectedTask;
 
 export default slice.reducer;

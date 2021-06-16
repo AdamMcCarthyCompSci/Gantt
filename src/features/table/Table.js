@@ -69,7 +69,7 @@ export function Table() {
         key={date}
         onMouseOver={() => handleMouseOver(date, row)}
         onMouseLeave={() => handleMouseOver(null, null)}
-        onClick={() => dispatch(createTask({index: index, row: row, width: 53}))}>
+        onClick={() => dispatch(createTask({name: "", desc: "", index: index, row: row, width: 52}))}>
             {tasks.map((task) => (
             task.index.isSame(index, "day") && task.row == row && <Task index={index} row={row}/>
               ))}
@@ -85,7 +85,7 @@ export function Table() {
         key={date}
         onMouseOver={() => handleMouseOver(date, row)}
         onMouseLeave={() => handleMouseOver(null, null)}
-        onClick={() => dispatch(createTask({index: index, row: row, width: 53}))}>
+        onClick={() => dispatch(createTask({name: "", desc: "", index: index, row: row, width: 52}))}>
             {tasks.map((task) => (
             task.index.isSame(index, "day") && task.row == row && <Task index={index} row={row}/>
               ))}
@@ -100,7 +100,7 @@ export function Table() {
   return (
       <div className={styles.mainTableContainer}>
       <table className={styles.mainTable}>
-        <thead>
+        <thead style={{color: "white"}}>
             <tr>
           {days.map((date) => (
             checkMonth(date)

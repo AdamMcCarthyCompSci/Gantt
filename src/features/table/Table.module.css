@@ -1,7 +1,7 @@
 table, td {
     border-bottom: 1px solid white;
     border-right: 1px solid white;
-    border-collapse: separate;
+    border-collapse: collapse;
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -75,6 +75,8 @@ table, td {
     min-width: 50px;
     max-width: 50px;
     height: 30px;
+    align-items: center;
+    justify-content: center;
 }
 
 .leftHeader {
@@ -99,25 +101,25 @@ table, td {
 }
 
 .mainTableContainer {
-    width: 83.333%;
-    height: 500px;
+    width: 100%;
     overflow: scroll;
-    position: absolute;
+    position: relative;
+    height: 70vh;
 }
 .mainTable {
-    position: absolute;
+    position: relative;
 }
 .leftTableContainer {
     width: 100%;
-    height: 500px;
+    height: 70vh;
     overflow: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* IE 10+ */
-    position: absolute;
+    position: relative;
 }
 .leftTable {
-    width: 16.666%;
-    position: absolute;
+    width: 100%;
+    position: relative;
 }
 
 .leftTableContainer::-webkit-scrollbar {
@@ -132,17 +134,22 @@ table>tbody>tr>td {
     position: relative;
     /* border-radius: 2px; */
     text-align: center;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .task {
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 25px;
+    line-height: 30px;
+    text-align: center;
     background-color: #0E5A8A;
     z-index: 2;
-    min-height: 30px;
-    max-height: 30px;
+    min-height: 32px;
+    max-height: 32px;
+    transition: 0.2s;
 }
 thead tr:nth-child(1) th {
     position: sticky;
@@ -152,3 +159,11 @@ thead tr:nth-child(2) th {
     position: sticky;
     top: 22px;
   }
+.taskInfoContainer {
+    position: absolute;
+    height: 25vh;
+}
+.row {
+    height: 5vh;
+    width: 100%;
+}
