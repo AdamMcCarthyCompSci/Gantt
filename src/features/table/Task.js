@@ -49,7 +49,7 @@ export function Task({index, row}) {
     return (
         <Rnd className={styles.task}
         style={{border: getBorder(), backgroundColor: getColor(getTask().theme)}}
-        onClick={() => dispatch(selectTask({name: getTask().name, desc: getTask().desc, index: index, theme: getTask().theme, row: row}))}
+        onClick={() => dispatch(selectTask({name: getTask().name, desc: getTask().desc, index: index, theme: getTask().theme, width: getTask().width, row: row}))}
         onDragStop={(e, d) => {
             const currentX = Math.round(d.x / 53);
             const currentY = Math.round(d.y / 33);

@@ -22,7 +22,7 @@ export const slice = createSlice({
     monthCount: 0,
     days: days,
     tasks: [],
-    selectedTask: {selected: false, name: "", desc: "", index: moment(), theme: "No Theme Selected", row: ""},
+    selectedTask: {selected: false, name: "", desc: "", index: moment(), theme: "No Theme Selected", startDate: moment(), endDate: moment(), row: ""},
     themes: [{title: "No Theme Selected", color: "#ffffff"}]
   },
   reducers: {
@@ -63,7 +63,8 @@ export const slice = createSlice({
         console.log("Task already exists in this cell!");
       }
       else {
-        state.tasks.push(action.payload)
+        console.log(action.payload);
+        state.tasks.push(action.payload);
       }
     },
     dragTask: (state, action) => {
@@ -98,16 +99,18 @@ export const slice = createSlice({
       state.tasks[taskIndex].width = action.payload.width;
       console.log(action.payload.width)
       if (action.payload.direction == "left") {
-        state.tasks[taskIndex].index = moment(task.index).subtract(Math.abs(action.payload.resizeChange), "days");
+        state.tasks[taskIndex].index = moment(task.index).subtract(action.payload.resizeChange, "days");
       }
+      
     },
     selectTask: (state, action) => {
       if ((state.selectedTask.index).isSame(action.payload.index, "day") && state.selectedTask.row == action.payload.row) {
-        state.selectedTask = {selected: false, name: "", desc: "", index: moment(), theme: "No Theme Selected", row: ""}
+        state.selectedTask = {selected: false, name: "", desc: "", index: moment(), startDate: moment(), endDate: moment(), theme: "No Theme Selected", row: ""}
 
       }
       else {
-        state.selectedTask = {selected: true, name: action.payload.name, desc: action.payload.desc, index: action.payload.index, theme: action.payload.theme, row: action.payload.row};
+        console.log(action.payload.width);
+        state.selectedTask = {selected: true, name: action.payload.name, desc: action.payload.desc, index: action.payload.index, theme: action.payload.theme, startDate: moment(action.payload.index), endDate: moment(action.payload.index).add(action.payload.width/52, "days"), row: action.payload.row};
       }
     },
     renameTask: (state, action) => {
@@ -130,11 +133,28 @@ export const slice = createSlice({
       const isTask = (task) =>  ((task.index).isSame(state.selectedTask.index, "day") && task.row == state.selectedTask.row);
       const taskIndex = state.tasks.findIndex(isTask);
       state.tasks[taskIndex].theme = action.payload.theme;
+    },
+    startDateTask: (state, action) => {
+      const isTask = (task) =>  ((task.index).isSame(state.selectedTask.index, "day") && task.row == state.selectedTask.row);
+      const taskIndex = state.tasks.findIndex(isTask);
+      state.selectedTask.index = action.payload.startDate;
+      state.selectedTask.startDate = action.payload.startDate;
+      state.tasks[taskIndex].index = action.payload.startDate;
+    },
+    endDateTask: (state, action) => {
+      const isTask = (task) =>  ((task.index).isSame(state.selectedTask.index, "day") && task.row == state.selectedTask.row);
+      const taskIndex = state.tasks.findIndex(isTask);
+      const duration = moment.duration(state.selectedTask.index.diff(action.payload.endDate));
+      const days = duration.asDays();
+      state.selectedTask.width = Math.abs(days * 52);
+      console.log("days", days);
+      state.selectedTask.endDate = action.payload.endDate;
+      state.tasks[taskIndex].width = state.selectedTask.width;
     }
   },
 });
 
-export const { increment, decrement, futureMonth, pastMonth, createTask, dragTask, resizeTask, selectTask, renameTask, descTask, createTheme, themeTask } = slice.actions;
+export const { increment, decrement, futureMonth, pastMonth, createTask, dragTask, resizeTask, selectTask, renameTask, descTask, createTheme, themeTask, startDateTask, endDateTask } = slice.actions;
 
 export const rowCountTable = state => state.table.rowCount;
 export const currentDayTable = state => state.table.currentDay;

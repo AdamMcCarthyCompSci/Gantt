@@ -5,7 +5,9 @@ import {
     renameTask,
     descTask,
     themesTable,
-    themeTask
+    themeTask,
+    startDateTask,
+    endDateTask
 } from './TableSlice';
 import styles from './Table.module.css';
 import moment from "moment";
@@ -36,8 +38,6 @@ export function TaskInfo() {
     const selectedTask = useSelector(selectedTaskTable);
     const themes = useSelector(themesTable);
     const classes = useStyles();
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
 
     const handleName = (event) => {
         dispatch(renameTask({name: event.target.value}))
@@ -48,6 +48,12 @@ export function TaskInfo() {
     const handleThemeChange = (event) => {
         dispatch(themeTask({theme: event.target.value}))
     };
+    const handleStartDate = (startDate) => {
+        dispatch(startDateTask({startDate: startDate}))
+    }
+    const handleEndDate = (endDate) => {
+        dispatch(endDateTask({endDate: endDate}))
+    }
 
     return (
         <div className={styles.taskInfoContainer}>
@@ -101,15 +107,17 @@ export function TaskInfo() {
                 disableToolbar
                 variant="inline"
                 label="Start Date"
-                value={startDate}
-                onChange={setStartDate}
+                maxDate={selectedTask.endDate}
+                value={selectedTask.startDate}
+                onChange={handleStartDate}
             />
             <DatePicker
                 disableToolbar
                 variant="inline"
                 label="End Date"
-                value={endDate}
-                onChange={setEndDate}
+                minDate={selectedTask.startDate}
+                value={selectedTask.endDate}
+                onChange={handleEndDate}
             />
             </MuiPickersUtilsProvider>
             </Grid>
