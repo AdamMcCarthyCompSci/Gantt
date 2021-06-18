@@ -22,7 +22,8 @@ export const slice = createSlice({
     monthCount: 0,
     days: days,
     tasks: [],
-    selectedTask: {selected: false, name: "", desc: "", index: moment(), row: ""}
+    selectedTask: {selected: false, name: "", desc: "", index: moment(), theme: "No Theme Selected", row: ""},
+    themes: [{title: "No Theme Selected", color: "#ffffff"}]
   },
   reducers: {
     increment: state => {
@@ -102,11 +103,11 @@ export const slice = createSlice({
     },
     selectTask: (state, action) => {
       if ((state.selectedTask.index).isSame(action.payload.index, "day") && state.selectedTask.row == action.payload.row) {
-        state.selectedTask = {selected: false, name: "", desc: "", index: moment(), row: ""}
+        state.selectedTask = {selected: false, name: "", desc: "", index: moment(), theme: "No Theme Selected", row: ""}
 
       }
       else {
-        state.selectedTask = {selected: true, name: action.payload.name, desc: action.payload.desc, index: action.payload.index, row: action.payload.row};
+        state.selectedTask = {selected: true, name: action.payload.name, desc: action.payload.desc, index: action.payload.index, theme: action.payload.theme, row: action.payload.row};
       }
     },
     renameTask: (state, action) => {
@@ -122,17 +123,24 @@ export const slice = createSlice({
       state.tasks[taskIndex].desc = action.payload.desc;
     },
     createTheme: (state, action) => {
-
+      state.themes.push({title: action.payload.title, color: action.payload.color})
+    },
+    themeTask: (state, action) => {
+      state.selectedTask.theme = action.payload.theme;
+      const isTask = (task) =>  ((task.index).isSame(state.selectedTask.index, "day") && task.row == state.selectedTask.row);
+      const taskIndex = state.tasks.findIndex(isTask);
+      state.tasks[taskIndex].theme = action.payload.theme;
     }
   },
 });
 
-export const { increment, decrement, futureMonth, pastMonth, createTask, dragTask, resizeTask, selectTask, renameTask, descTask, createTheme } = slice.actions;
+export const { increment, decrement, futureMonth, pastMonth, createTask, dragTask, resizeTask, selectTask, renameTask, descTask, createTheme, themeTask } = slice.actions;
 
 export const rowCountTable = state => state.table.rowCount;
 export const currentDayTable = state => state.table.currentDay;
 export const daysTable = state => state.table.days;
 export const tasksTable = state => state.table.tasks;
 export const selectedTaskTable = state => state.table.selectedTask;
+export const themesTable = state => state.table.themes;
 
 export default slice.reducer;

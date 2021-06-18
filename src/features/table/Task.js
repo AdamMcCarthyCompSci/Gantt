@@ -4,7 +4,8 @@ import {
     selectedTaskTable,
     dragTask,
     resizeTask,
-    tasksTable
+    tasksTable,
+    themesTable
 } from './TableSlice';
 import styles from './Table.module.css';
 import { Rnd } from "react-rnd";
@@ -15,6 +16,7 @@ export function Task({index, row}) {
     const dispatch = useDispatch();
     const tasks = useSelector(tasksTable);
     const selectedTask = useSelector(selectedTaskTable);
+    const themes = useSelector(themesTable);
 
     const getTask = () => {
         const isTask = (task) =>  ((task.index).isSame(index) && task.row == row);
@@ -38,10 +40,16 @@ export function Task({index, row}) {
         }
     }
 
+    const getColor = (theme) => {
+        const isTheme = (object) =>  (theme == object.title);
+        const themeIndex = themes.findIndex(isTheme);
+        return themes[themeIndex].color;
+    }
+
     return (
         <Rnd className={styles.task}
-        style={{border: getBorder()}}
-        onClick={() => dispatch(selectTask({name: getTask().name, desc: getTask().desc, index: index, row: row}))}
+        style={{border: getBorder(), backgroundColor: getColor(getTask().theme)}}
+        onClick={() => dispatch(selectTask({name: getTask().name, desc: getTask().desc, index: index, theme: getTask().theme, row: row}))}
         onDragStop={(e, d) => {
             const currentX = Math.round(d.x / 53);
             const currentY = Math.round(d.y / 33);
