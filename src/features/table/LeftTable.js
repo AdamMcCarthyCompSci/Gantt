@@ -28,7 +28,9 @@ export function LeftTable() {
             <tbody>
               {[...Array(count)].map((index, row) => (
                   <tr>
-                      <td key={row} className={styles.leftRow}>
+                      <td
+                      //  key={row} 
+                       className={styles.leftRow}>
                         task
                       </td>
                   </tr>

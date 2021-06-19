@@ -10,7 +10,6 @@ import {
     endDateTask
 } from './TableSlice';
 import styles from './Table.module.css';
-import moment from "moment";
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from "@material-ui/core/Grid";
@@ -21,7 +20,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
+import DayJsUtils from '@date-io/dayjs';
 import { DatePicker, KeyboardDatePicker } from "@material-ui/pickers";
 
 const useStyles = makeStyles((theme) => ({
@@ -102,7 +101,7 @@ export function TaskInfo() {
               </FormControl>}
             </Grid>
             <Grid item xs={3}>
-            <MuiPickersUtilsProvider utils={MomentUtils}>
+            {selectedTask.selected && <MuiPickersUtilsProvider utils={DayJsUtils}>
             <DatePicker
                 disableToolbar
                 variant="inline"
@@ -119,7 +118,7 @@ export function TaskInfo() {
                 value={selectedTask.endDate}
                 onChange={handleEndDate}
             />
-            </MuiPickersUtilsProvider>
+            </MuiPickersUtilsProvider>}
             </Grid>
         </Grid>
       </div>

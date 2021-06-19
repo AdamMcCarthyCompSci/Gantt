@@ -9,7 +9,6 @@ import {
 } from './TableSlice';
 import styles from './Table.module.css';
 import { Rnd } from "react-rnd";
-import moment from "moment";
 import React from 'react';
 
 export function Task({index, row}) {
@@ -19,7 +18,7 @@ export function Task({index, row}) {
     const themes = useSelector(themesTable);
 
     const getTask = () => {
-        const isTask = (task) =>  ((task.index).isSame(index) && task.row == row);
+        const isTask = (task) =>  ((task.index).isSame(index, "days") && task.row == row);
         const taskIndex = tasks.findIndex(isTask);
         let task = tasks[taskIndex];
         if (task == undefined) {
@@ -32,7 +31,7 @@ export function Task({index, row}) {
         if (selectedTask.index == "") {
             return "";
         }
-        else if ((selectedTask.index).isSame(index) && selectedTask.row == row) {
+        else if ((selectedTask.index).isSame(index, "days") && selectedTask.row == row) {
             return "3px solid #23C9FF";
         }
         else {

@@ -9,36 +9,42 @@ import {
 
 } from './TableSlice';
 import styles from './Table.module.css';
-import moment from "moment";
+import dayjs from 'dayjs';
 import AddIcon from '@material-ui/icons/Add';
 import Zoom from '@material-ui/core/Zoom';
 import { Task } from './Task';
 
 const checkWeekend = (date, currentDay) => {
-  if (moment(date).isSame(currentDay)) {
+  if (dayjs(date).isSame(currentDay)) {
     return (
-      <th className={styles.today} key={date}>
-        {date.format("Do")}
+      <th className={styles.today}
+      //  key={date}
+       >
+        {date.format("D")}
       </th>)
   }
   else if (date.format("d") == 0 || date.format("d") == 6) {
     return (
-    <th className={styles.weekend} key={date}>
-      {date.format("Do")}
+    <th className={styles.weekend}
+    //  key={date}
+     >
+      {date.format("D")}
     </th>)
   }
   else {
     return (
       <th className={styles.weekday} key={date}>
-        {date.format("Do")}
+        {date.format("D")}
       </th> )
   }
 }
 
 const checkMonth = (date) => {
-  if(moment(date).format("D") == 1) {
+  if(dayjs(date).format("D") == 1) {
     return (
-      <th className={styles.month} key={date} colSpan={date.daysInMonth()}>
+      <th className={styles.month}
+      //  key={date} 
+       colSpan={date.daysInMonth()}>
         {date.format("MMMM YYYY")}
       </th>
     );
@@ -66,7 +72,7 @@ export function Table() {
     if (row % 2 == 0) {
       return (
         <td className={styles.evenRow} 
-        key={date}
+        // key={date}
         onMouseOver={() => handleMouseOver(date, row)}
         onMouseLeave={() => handleMouseOver(null, null)}
         onClick={() => dispatch(createTask({name: "", desc: "", index: index, row: row, theme: "No Theme Selected", width: 52}))}>
@@ -82,7 +88,7 @@ export function Table() {
     else {
       return (
         <td className={styles.oddRow} 
-        key={date}
+        // key={date}
         onMouseOver={() => handleMouseOver(date, row)}
         onMouseLeave={() => handleMouseOver(null, null)}
         onClick={() => dispatch(createTask({name: "", desc: "", index: index, row: row, theme: "No Theme Selected", width: 52}))}>

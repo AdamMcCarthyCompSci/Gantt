@@ -1,28 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit';
-import moment from "moment";
+import dayjs from 'dayjs';
 
-const current = moment();
-let firstOfMonth = moment(current).subtract(moment().format("D") - 1, "days")
+const current = dayjs();
+let firstOfMonth = dayjs(current).subtract(dayjs().format("D") - 1, "day");
 let days = []
-let currentMonth = moment(firstOfMonth);
-let daysInCurrentMonth = moment(currentMonth).daysInMonth();
+let currentMonth = dayjs(firstOfMonth);
+let daysInCurrentMonth = dayjs(currentMonth).daysInMonth();
 for (let i = 1; i <= daysInCurrentMonth; i++) {
   days.push(currentMonth)
-  currentMonth = moment(currentMonth).add(1, "days");
+  currentMonth = dayjs(currentMonth).add(1, "day");
 }
 
 export const slice = createSlice({
   name: 'table',
   initialState: {
     rowCount: 10,
-    currentDay: moment(current),
-    rightMonth: moment(firstOfMonth),
-    leftMonth: moment(firstOfMonth),
-    firstOfMonth: moment(firstOfMonth),
+    currentDay: dayjs(current),
+    rightMonth: dayjs(firstOfMonth),
+    leftMonth: dayjs(firstOfMonth),
+    firstOfMonth: dayjs(firstOfMonth),
     monthCount: 0,
     days: days,
     tasks: [],
-    selectedTask: {selected: false, name: "", desc: "", index: moment(), theme: "No Theme Selected", startDate: moment(), endDate: moment(), row: ""},
+    selectedTask: {selected: false, name: "", desc: "", index: dayjs(), theme: "No Theme Selected", startDate: dayjs(), endDate: dayjs(), row: ""},
     themes: [{title: "No Theme Selected", color: "#ffffff"}]
   },
   reducers: {
@@ -36,25 +36,26 @@ export const slice = createSlice({
     },
     futureMonth: state => {
       state.monthCount += 1;
-      state.leftMonth.add(1, "month");
+      state.leftMonth = state.leftMonth.add(1, "month");
+      let futureMonth = state.leftMonth;
+      console.log(state.leftMonth);
       let futureMonthDays = []
-      let futureMonth = moment(state.leftMonth);
-      let daysInFutureMonth = moment(futureMonth).daysInMonth();
+      let daysInFutureMonth = futureMonth.daysInMonth();
       for (let i = 1; i <= daysInFutureMonth; i++) {
         futureMonthDays.push(futureMonth)
-        futureMonth = moment(futureMonth).add(1, "days");
+        futureMonth = futureMonth.add(1, "day");
       }
       state.days = state.days.concat(futureMonthDays);
     },
     pastMonth: state => {
       state.monthCount += 1
-      state.rightMonth.subtract(1, "month");
+      state.rightMonth = state.rightMonth.subtract(1, "month");
+      let pastMonth = state.rightMonth;
       let pastMonthDays = []
-      let pastMonth = moment(state.rightMonth)
-      let daysInPastMonth = moment(pastMonth).daysInMonth();
+      let daysInPastMonth = pastMonth.daysInMonth();
       for (let i = 1; i <= daysInPastMonth; i++) {
         pastMonthDays.push(pastMonth)
-        pastMonth = moment(pastMonth).add(1, "days");
+        pastMonth = pastMonth.add(1, "day");
       }
       state.days = pastMonthDays.concat(state.days);
     },
@@ -75,10 +76,10 @@ export const slice = createSlice({
         console.log("Task not found!", taskIndex);
       }
       if (action.payload.x > 0) {
-        state.tasks[taskIndex].index = moment(task.index).add(Math.abs(action.payload.x), "days");
+        state.tasks[taskIndex].index = dayjs(task.index).add(Math.abs(action.payload.x), "day");
       }
       else if (action.payload.x < 0) {
-        state.tasks[taskIndex].index = moment(task.index).subtract(Math.abs(action.payload.x), "days");
+        state.tasks[taskIndex].index = dayjs(task.index).subtract(Math.abs(action.payload.x), "day");
       }
       if (action.payload.y > 0) {
         task.row += action.payload.y;
@@ -88,6 +89,9 @@ export const slice = createSlice({
       }
       state.tasks[taskIndex].index = task.index;
       state.tasks[taskIndex].row = task.row;
+      state.selectedTask.index = state.tasks[taskIndex].index;
+      state.selectedTask.startDate = state.tasks[taskIndex].index;
+      state.selectedTask.endDate = state.tasks[taskIndex].index.add(state.tasks[taskIndex].width / 53, "day")
     },
     resizeTask: (state, action) => {
       const isTask = (task) =>  ((task.index).isSame(action.payload.index, "day") && task.row == action.payload.row);
@@ -99,18 +103,22 @@ export const slice = createSlice({
       state.tasks[taskIndex].width = action.payload.width;
       console.log(action.payload.width)
       if (action.payload.direction == "left") {
-        state.tasks[taskIndex].index = moment(task.index).subtract(action.payload.resizeChange, "days");
+        state.tasks[taskIndex].index = dayjs(task.index).subtract(action.payload.resizeChange, "day");
       }
+      state.selectedTask.width = state.tasks[taskIndex].width;
+      state.selectedTask.index = state.tasks[taskIndex].index;
+      state.selectedTask.startDate = state.tasks[taskIndex].index;
+      state.selectedTask.endDate = state.tasks[taskIndex].index.add(state.tasks[taskIndex].width / 53, "day")
       
     },
     selectTask: (state, action) => {
       if ((state.selectedTask.index).isSame(action.payload.index, "day") && state.selectedTask.row == action.payload.row) {
-        state.selectedTask = {selected: false, name: "", desc: "", index: moment(), startDate: moment(), endDate: moment(), theme: "No Theme Selected", row: ""}
+        state.selectedTask = {selected: false, name: "", desc: "", index: dayjs(), startDate: dayjs(), endDate: dayjs(), theme: "No Theme Selected", row: ""}
 
       }
       else {
         console.log(action.payload.width);
-        state.selectedTask = {selected: true, name: action.payload.name, desc: action.payload.desc, index: action.payload.index, theme: action.payload.theme, startDate: moment(action.payload.index), endDate: moment(action.payload.index).add(action.payload.width/52, "days"), row: action.payload.row};
+        state.selectedTask = {selected: true, name: action.payload.name, desc: action.payload.desc, index: action.payload.index, theme: action.payload.theme, startDate: dayjs(action.payload.index), endDate: dayjs(action.payload.index).add(action.payload.width/53, "day"), row: action.payload.row};
       }
     },
     renameTask: (state, action) => {
@@ -144,10 +152,8 @@ export const slice = createSlice({
     endDateTask: (state, action) => {
       const isTask = (task) =>  ((task.index).isSame(state.selectedTask.index, "day") && task.row == state.selectedTask.row);
       const taskIndex = state.tasks.findIndex(isTask);
-      const duration = moment.duration(state.selectedTask.index.diff(action.payload.endDate));
-      const days = duration.asDays();
-      state.selectedTask.width = Math.abs(days * 52);
-      console.log("days", days);
+      const duration = state.selectedTask.index.diff(action.payload.endDate, "day");
+      state.selectedTask.width = Math.abs((duration * 53) + 1);
       state.selectedTask.endDate = action.payload.endDate;
       state.tasks[taskIndex].width = state.selectedTask.width;
     }
