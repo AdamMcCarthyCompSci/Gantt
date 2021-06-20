@@ -18,6 +18,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import TextField from '@material-ui/core/TextField';
+import CreateIcon from '@material-ui/icons/Create';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -67,7 +68,7 @@ export function CreateTheme() {
 
     return (
         <div className={styles.row}>
-      <Button onClick={handleClickOpen}>New Theme</Button>
+      <Button variant="contained" color="primary" startIcon={<CreateIcon />} onClick={handleClickOpen}>New Theme</Button>
       <Dialog disableBackdropClick disableEscapeKeyDown open={open} onClose={handleCancel}>
         <DialogTitle>Fill the form</DialogTitle>
         <DialogContent>

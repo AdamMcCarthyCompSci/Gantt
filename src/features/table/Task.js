@@ -45,6 +45,19 @@ export function Task({index, row}) {
         return themes[themeIndex].color;
     }
 
+    const displayTaskName = () => {
+        const taskName = getTask().name;
+        const taskWidth = getTask().width;
+        const taskNameSubstring = (taskWidth / 53) * 4;
+        if (taskName.length > taskNameSubstring) {
+            return taskName.substring(0, taskNameSubstring).concat("...");
+        }
+        else {
+            return taskName;
+        }
+        return getTask().name.substring(0, ((getTask().width / 53) * 4) + 4).concat("...");
+    }
+
     return (
         <Rnd className={styles.task}
         style={{border: getBorder(), backgroundColor: getColor(getTask().theme)}}
@@ -75,7 +88,7 @@ export function Task({index, row}) {
             topLeft: false,
           }}
         >
-          {getTask().name}  
+          {displayTaskName()}  
         </Rnd>
     )
 }

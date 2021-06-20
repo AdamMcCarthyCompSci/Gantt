@@ -23,7 +23,7 @@ export const slice = createSlice({
     days: days,
     tasks: [],
     selectedTask: {selected: false, name: "", desc: "", index: dayjs(), theme: "No Theme Selected", startDate: dayjs(), endDate: dayjs(), row: ""},
-    themes: [{title: "No Theme Selected", color: "#ffffff"}]
+    themes: [{title: "No Theme Selected", color: "#0E5A8A"}]
   },
   reducers: {
     increment: state => {
@@ -148,6 +148,10 @@ export const slice = createSlice({
       state.selectedTask.index = action.payload.startDate;
       state.selectedTask.startDate = action.payload.startDate;
       state.tasks[taskIndex].index = action.payload.startDate;
+      const duration = state.selectedTask.index.diff(state.selectedTask.endDate, "day");
+      state.selectedTask.width = Math.abs((duration * 53) + 1);
+      state.tasks[taskIndex].width = state.selectedTask.width;
+
     },
     endDateTask: (state, action) => {
       const isTask = (task) =>  ((task.index).isSame(state.selectedTask.index, "day") && task.row == state.selectedTask.row);
