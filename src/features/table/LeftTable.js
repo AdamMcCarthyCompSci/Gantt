@@ -17,48 +17,6 @@ export function LeftTable() {
     const count = useSelector(rowCountTable);
     const themes = useSelector(themesTable);
     
-    // const leftTheme = (theme, row, index) => {
-    //   console.log(theme, row, index);
-    //   if (row === 0) {
-    //     return (
-    //       <Draggable draggableId={row.toString()} index={row}>
-    //       {(provided) => (
-    //       <tr
-    //       {...provided.draggableProps}
-    //       {...provided.dragHandleProps}
-    //       innerRef={provided.innerRef}>
-    //         <td
-    //         //  key={row} 
-    //         className={styles.leftRow} style={{backgroundColor: theme.color}}>
-    //           {theme.title}
-    //         </td>
-    //       </tr>
-    //       )}
-    //       </Draggable>
-    //     )
-    //   }
-    //   else if (row === (theme.rows - 1)) {
-    //       <tr>
-    //         <td
-    //         //  key={row} 
-    //         className={styles.leftRow} style={{backgroundColor: theme.color}}>
-    //           {row}
-    //         </td>
-    //       </tr>
-    //   }
-    //   else {
-    //     return (
-    //       <tr>
-    //         <td
-    //         //  key={row} 
-    //         className={styles.leftRow}>
-    //           {row}
-    //         </td>
-    //         </tr>
-    //     )
-    //   }
-    // }
-
     const themeDragTitles = (row, index, snapshot) => {
       if (row.row === 0) {
       return (
