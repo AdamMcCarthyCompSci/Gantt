@@ -23,7 +23,6 @@ export function LeftTable() {
         <Draggable key={index} draggableId={index.toString()} index={index}>
         {(provided) => (
           <div
-          // className={styles.themeContainer}
           {...provided.draggableProps}
           ref={provided.innerRef}>
             <td
@@ -33,9 +32,20 @@ export function LeftTable() {
             style={{backgroundColor: row.theme.color}}>
               {row.theme.title} {index}
             </td>
+            <DragDropContext onDragEnd={rowDragEnd()}>
+            <Droppable droppableId={"droppableRows"}>
+          {(provided, snapshot) => (
+            <div
+            ref={provided.innerRef} 
+            {...provided.droppableProps}>
             {themesArray.map((row, rowIndex) => (
               themeDragRows(row, index, rowIndex, snapshot)
             ))}
+            {provided.placeholder}
+            </div>
+          )}
+            </Droppable>
+            </DragDropContext>
           </div>
         )}
       </Draggable>
@@ -45,16 +55,23 @@ export function LeftTable() {
 
     const themeDragRows = (row, index, rowIndex, snapshot) => {
       if (row.row !== 0 && index < rowIndex && rowIndex < (index + 5) ) {
-        console.log("row:", row.row, "index:", index, "rowIndex:", rowIndex)
+        // console.log("row:", row.row, "index:", index, "rowIndex:", rowIndex)
         return (
           <React.Fragment>
-            <div>
+            <Draggable key={rowIndex} draggableId={rowIndex.toString()} index={rowIndex}>
+            {(provided) => (
+            <div
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}>
               <td
               //  key={row} 
               className={styles.leftRow} style={{width: "100%"}}>
                 {row.row}
               </td>
             </div>
+            )}
+          </Draggable>
           </React.Fragment>
         )
       }
@@ -77,19 +94,21 @@ export function LeftTable() {
       width: "100%",
     });
 
-    const DNDdragEnd = () => {
+    const themeDragEnd = () => {
+      // 
+    }
+    const rowDragEnd = () => {
       // 
     }
 
     useEffect(() => {
         dispatch(updateThemesArray({}));
-        console.log(themesArray);
     }, [themes])
 
     return (
         <div className={styles.leftTableContainer}>
-          <DragDropContext onDragEnd={DNDdragEnd()}>
-            <Droppable droppableId={"droppable"}>
+          <DragDropContext onDragEnd={themeDragEnd()}>
+            <Droppable droppableId={"droppableThemes"}>
         {(provided, snapshot) => (
           <table
           className={styles.leftTable}
