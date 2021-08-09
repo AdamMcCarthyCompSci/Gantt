@@ -91,7 +91,7 @@ table, td {
 }
 
 .leftRow {
-    /* display: flex; */
+    display: flex;
     background-color: #0d7377;
     width: 100%;
     position: relative;
@@ -167,3 +167,6 @@ thead tr:nth-child(2) th {
     height: 5vh;
     width: 100%;
 }
+/* .themeContainer {
+    
+} */

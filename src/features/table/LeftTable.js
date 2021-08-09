@@ -23,9 +23,9 @@ export function LeftTable() {
         <Draggable key={index} draggableId={index.toString()} index={index}>
         {(provided) => (
           <div
+          // className={styles.themeContainer}
           {...provided.draggableProps}
-          ref={provided.innerRef}
-          style={getItemStyle(snapshot.isDraggingOver, provided.draggableProps.style)}>
+          ref={provided.innerRef}>
             <td
             //  key={row} 
             className={styles.leftRow}
@@ -47,15 +47,15 @@ export function LeftTable() {
       if (row.row !== 0 && index < rowIndex && rowIndex < (index + 5) ) {
         console.log("row:", row.row, "index:", index, "rowIndex:", rowIndex)
         return (
-            <React.Fragment>
-            <tr>
+          <React.Fragment>
+            <div>
               <td
               //  key={row} 
               className={styles.leftRow} style={{width: "100%"}}>
                 {row.row}
               </td>
-            </tr>
-            </React.Fragment>
+            </div>
+          </React.Fragment>
         )
       }
     }
@@ -94,7 +94,7 @@ export function LeftTable() {
           <table
           className={styles.leftTable}
           ref={provided.innerRef} 
-          style={getListStyle(snapshot.isDraggingOver)}
+          // style={getListStyle(snapshot.isDraggingOver)}
           {...provided.droppableProps}>
             <thead>
               <tr>
