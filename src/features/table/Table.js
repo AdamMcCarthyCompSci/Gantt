@@ -5,7 +5,8 @@ import {
   currentDayTable,
   daysTable,
   tasksTable,
-  createTask
+  createTask,
+  themesTable,
 
 } from './TableSlice';
 import styles from './Table.module.css';
@@ -58,6 +59,7 @@ export function Table() {
 
   const dispatch = useDispatch();
   const count = useSelector(rowCountTable);
+  const themes = useSelector(themesTable);
   const currentDay = useSelector(currentDayTable);
   const days = useSelector(daysTable);
   const tasks = useSelector(tasksTable);
@@ -67,40 +69,26 @@ export function Table() {
     setMouseOverCell({date, rowNumber});
   };
 
-  const checkRow = (date, index, row) => {
+  const checkRow = (date, index, theme, row) => {
 
-    if (row % 2 == 0) {
       return (
-        <td className={styles.evenRow} 
+      <td className={rowClass(row)}
         // key={date}
         onMouseOver={() => handleMouseOver(date, row)}
         onMouseLeave={() => handleMouseOver(null, null)}
-        onClick={() => dispatch(createTask({name: "", desc: "", index: index, row: row, theme: "No Theme Selected", width: 52}))}>
+        onClick={() => dispatch(createTask({name: "", desc: "", index: index, row: row, themeLocation: theme, theme: theme, width: 52}))}>
             {tasks.map((task) => (
-            task.index.isSame(index, "day") && task.row == row && <Task index={index} row={row}/>
+            task.index.isSame(index, "day") && task.themeLocation === theme && task.row === row && <Task index={index} row={row} themeLocation={theme}/>
               ))}
           <Zoom in={date == mouseOverCell.date && row == mouseOverCell.rowNumber} {...(mouseOverCell ? { timeout: 800 } : {})} mountOnEnter unmountOnExit>
             <AddIcon />
           </Zoom>
-        </td>
+      </td>
       )
-    }
-    else {
-      return (
-        <td className={styles.oddRow} 
-        // key={date}
-        onMouseOver={() => handleMouseOver(date, row)}
-        onMouseLeave={() => handleMouseOver(null, null)}
-        onClick={() => dispatch(createTask({name: "", desc: "", index: index, row: row, theme: "No Theme Selected", width: 52}))}>
-            {tasks.map((task) => (
-            task.index.isSame(index, "day") && task.row == row && <Task index={index} row={row}/>
-              ))}
-          <Zoom in={date == mouseOverCell.date && row == mouseOverCell.rowNumber} {...(mouseOverCell ? { timeout: 800 } : {})} mountOnEnter unmountOnExit>
-            <AddIcon />
-          </Zoom>
-        </td>
-      )
-    }
+  }
+
+  const rowClass = (row) => {
+    return (row === 0 ? styles.oddRow : styles.evenRow)
   }
 
   return (
@@ -118,13 +106,24 @@ export function Table() {
           ))}
           </tr>
           </thead>
-          <tbody className="ganttBody">
+          {/* <tbody className="ganttBody">
             {[...Array(count)].map((index, row) => (
                 <tr>
                   {days.map((index, date) => (
                     checkRow(date, index, row)
                   ))}
                 </tr>
+          ))}
+            </tbody> */}
+          <tbody className="ganttBody">
+            {themes.map((theme) => (
+              [...Array(theme.rows)].map((index, row) => (
+                <tr>
+                {days.map((index, date) => (
+                  checkRow(date, index, theme.title, row)
+              ))}
+              </tr>
+            ))
           ))}
             </tbody>
       </table>

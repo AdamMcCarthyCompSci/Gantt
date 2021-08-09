@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     createTheme,
-    themesTable
+    themesTable,
+    rowsPerThemeTable,
 } from './TableSlice';
 import styles from './Table.module.css';
 import { makeStyles } from '@material-ui/core/styles';
@@ -34,10 +35,12 @@ const useStyles = makeStyles((theme) => ({
 export function CreateTheme() {
     const dispatch = useDispatch();
     const themes = useSelector(themesTable);
+    const rowsPerTheme = useSelector(rowsPerThemeTable);
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const [color, setColor] = React.useState('');
     const [title, setTitle] = React.useState('');
+    const themeColors = ["#f44336", "#e91e63", "#9c27b0", "#3f51b5", "#2196f3", "#00bcd4", "#009688", "#4caf50", "#8bc34a", "#cddc39", "#ffeb3b", "#ff9800", "#ff5722", "#795548"];
   
     const handleTitleChange = (event) => {
       setTitle(event.target.value || '');
@@ -63,7 +66,7 @@ export function CreateTheme() {
                 return;
             }
         }
-        dispatch(createTheme({title: title, color: color}));
+        dispatch(createTheme({title: title, color: color, rows: rowsPerTheme}));
       };
 
     return (
@@ -89,20 +92,9 @@ export function CreateTheme() {
                 onChange={handleColorChange}
                 input={<Input />}
               >
-          <MenuItem value={"#f44336"}><FiberManualRecordIcon style={{fill: "#f44336"}}/></MenuItem>
-          <MenuItem value={"#e91e63"}><FiberManualRecordIcon style={{fill: "#e91e63"}}/></MenuItem>
-          <MenuItem value={"#9c27b0"}><FiberManualRecordIcon style={{fill: "#9c27b0"}}/></MenuItem>
-          <MenuItem value={"#3f51b5"}><FiberManualRecordIcon style={{fill: "#3f51b5"}}/></MenuItem>
-          <MenuItem value={"#2196f3"}><FiberManualRecordIcon style={{fill: "#2196f3"}}/></MenuItem>
-          <MenuItem value={"#00bcd4"}><FiberManualRecordIcon style={{fill: "#00bcd4"}}/></MenuItem>
-          <MenuItem value={"#009688"}><FiberManualRecordIcon style={{fill: "#009688"}}/></MenuItem>
-          <MenuItem value={"#4caf50"}><FiberManualRecordIcon style={{fill: "#4caf50"}}/></MenuItem>
-          <MenuItem value={"#8bc34a"}><FiberManualRecordIcon style={{fill: "#8bc34a"}}/></MenuItem>
-          <MenuItem value={"#cddc39"}><FiberManualRecordIcon style={{fill: "#cddc39"}}/></MenuItem>
-          <MenuItem value={"#ffeb3b"}><FiberManualRecordIcon style={{fill: "#ffeb3b"}}/></MenuItem>
-          <MenuItem value={"#ff9800"}><FiberManualRecordIcon style={{fill: "#ff9800"}}/></MenuItem>
-          <MenuItem value={"#ff5722"}><FiberManualRecordIcon style={{fill: "#ff5722"}}/></MenuItem>
-          <MenuItem value={"#795548"}><FiberManualRecordIcon style={{fill: "#795548"}}/></MenuItem>
+                {themeColors.map((themeColor) => (
+                  <MenuItem value={themeColor}><FiberManualRecordIcon style={{fill: themeColor}}/></MenuItem>
+                ))}
               </Select>
             </FormControl>
           </form>

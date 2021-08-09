@@ -91,6 +91,7 @@ table, td {
 }
 
 .leftRow {
+    display: flex;
     background-color: #0d7377;
     width: 100%;
     position: relative;

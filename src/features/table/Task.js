@@ -11,7 +11,7 @@ import styles from './Table.module.css';
 import { Rnd } from "react-rnd";
 import React from 'react';
 
-export function Task({index, row}) {
+export function Task({index, row, themeLocation}) {
     const dispatch = useDispatch();
     const tasks = useSelector(tasksTable);
     const selectedTask = useSelector(selectedTaskTable);
@@ -61,12 +61,12 @@ export function Task({index, row}) {
     return (
         <Rnd className={styles.task}
         style={{border: getBorder(), backgroundColor: getColor(getTask().theme)}}
-        onClick={() => dispatch(selectTask({name: getTask().name, desc: getTask().desc, index: index, theme: getTask().theme, width: getTask().width, row: row}))}
+        onClick={() => dispatch(selectTask({name: getTask().name, desc: getTask().desc, index: index, theme: getTask().theme, width: getTask().width, themeLocation: themeLocation, row: row}))}
         onDragStop={(e, d) => {
             const currentX = Math.round(d.x / 53);
             const currentY = Math.round(d.y / 33);
             if (currentX != 0 || currentY != 0) {
-                dispatch(dragTask({index: index, row: row, x: currentX, y: currentY}));
+                dispatch(dragTask({index: index, row: row, themeLocation: themeLocation, x: currentX, y: currentY}));
             } 
         }}
         onResizeStop={(e, direction, ref, delta, position) => {

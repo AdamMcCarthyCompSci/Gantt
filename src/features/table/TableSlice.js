@@ -11,6 +11,14 @@ for (let i = 1; i <= daysInCurrentMonth; i++) {
   currentMonth = dayjs(currentMonth).add(1, "day");
 }
 
+const rowsPerTheme = 5;
+
+const getRowsInfo = (rows) => {
+  const rowsInfo = [];
+  [...Array(rows)].map((index, row) => ( rowsInfo.push({title: row + "test"}) ))
+  return rowsInfo
+}
+
 export const slice = createSlice({
   name: 'table',
   initialState: {
@@ -22,8 +30,10 @@ export const slice = createSlice({
     monthCount: 0,
     days: days,
     tasks: [],
-    selectedTask: {selected: false, name: "", desc: "", index: dayjs(), theme: "No Theme Selected", startDate: dayjs(), endDate: dayjs(), row: ""},
-    themes: [{title: "No Theme Selected", color: "#0E5A8A"}]
+    selectedTask: {selected: false, name: "", desc: "", index: dayjs(), theme: "Default Theme", startDate: dayjs(), endDate: dayjs(), row: ""},
+    rowsPerTheme: 5,
+    themes: [{title: "Default Theme", color: "#0E5A8A", rows: 5, rowsInfo: getRowsInfo(rowsPerTheme) }],
+    themesArray: [],
   },
   reducers: {
     increment: state => {
@@ -69,7 +79,7 @@ export const slice = createSlice({
       }
     },
     dragTask: (state, action) => {
-      const isTask = (task) =>  ((task.index).isSame(action.payload.index, "day") && task.row == action.payload.row);
+      const isTask = (task) =>  ((task.index).isSame(action.payload.index, "day") && task.row === action.payload.row && task.themeLocation === action.payload.themeLocation);
       const taskIndex = state.tasks.findIndex(isTask);
       let task = state.tasks[taskIndex];
       if (task == undefined) {
@@ -81,16 +91,41 @@ export const slice = createSlice({
       else if (action.payload.x < 0) {
         state.tasks[taskIndex].index = dayjs(task.index).subtract(Math.abs(action.payload.x), "day");
       }
-      if (action.payload.y > 0) {
+      if (action.payload.y > 0) { 
         task.row += action.payload.y;
+        let themeIndex = state.themes.findIndex(theme => theme.title === task.themeLocation);
+        if (task.row >= state.themes[themeIndex].rows) {
+          do {
+            task.row -= state.themes[themeIndex].rows;
+            themeIndex += 1;
+            if (!state.themes[themeIndex].rows) {
+              break;
+            }
+          } while (task.row > state.themes[themeIndex].rows);
+          task.themeLocation = state.themes[themeIndex].title;
+        }
       }
       else if (action.payload.y < 0) {
         task.row += action.payload.y;
+        let themeIndex = state.themes.findIndex(theme => theme.title === task.themeLocation);
+        if (task.row < 0) {
+          do {
+            task.row += state.themes[themeIndex].rows;
+            themeIndex -= 1;
+            if (!state.themes[themeIndex].rows) {
+              break;
+            }
+          } while (task.row < 0);
+          task.themeLocation = state.themes[themeIndex].title;
+        }
       }
       state.tasks[taskIndex].index = task.index;
       state.tasks[taskIndex].row = task.row;
+      state.tasks[taskIndex].themeLocation = task.themeLocation;
       state.selectedTask.index = state.tasks[taskIndex].index;
       state.selectedTask.startDate = state.tasks[taskIndex].index;
+      state.selectedTask.themeLocation = state.tasks[taskIndex].themeLocation;
+      state.selectedTask.theme = state.tasks[taskIndex].theme;
       state.selectedTask.endDate = state.tasks[taskIndex].index.add(state.tasks[taskIndex].width / 53, "day")
     },
     resizeTask: (state, action) => {
@@ -113,7 +148,7 @@ export const slice = createSlice({
     },
     selectTask: (state, action) => {
       if ((state.selectedTask.index).isSame(action.payload.index, "day") && state.selectedTask.row == action.payload.row) {
-        state.selectedTask = {selected: false, name: "", desc: "", index: dayjs(), startDate: dayjs(), endDate: dayjs(), theme: "No Theme Selected", row: ""}
+        state.selectedTask = {selected: false, name: "", desc: "", index: dayjs(), startDate: dayjs(), endDate: dayjs(), theme: "Default Theme", row: ""}
 
       }
       else {
@@ -134,7 +169,7 @@ export const slice = createSlice({
       state.tasks[taskIndex].desc = action.payload.desc;
     },
     createTheme: (state, action) => {
-      state.themes.push({title: action.payload.title, color: action.payload.color})
+      state.themes.push({title: action.payload.title, color: action.payload.color, rows: 5, rowsInfo: getRowsInfo(rowsPerTheme)})
     },
     themeTask: (state, action) => {
       state.selectedTask.theme = action.payload.theme;
@@ -160,11 +195,21 @@ export const slice = createSlice({
       state.selectedTask.width = Math.abs((duration * 53) + 1);
       state.selectedTask.endDate = action.payload.endDate;
       state.tasks[taskIndex].width = state.selectedTask.width;
+    },
+    updateThemesArray: (state, action) => {
+      const updateArray = [];
+      state.themes.map((theme) => (
+        theme.rowsInfo.map((index, row) => (
+          updateArray.push({theme: theme, row: row, index: index})
+        ))
+      ))
+      state.themesArray = updateArray;
     }
   },
 });
 
-export const { increment, decrement, futureMonth, pastMonth, createTask, dragTask, resizeTask, selectTask, renameTask, descTask, createTheme, themeTask, startDateTask, endDateTask } = slice.actions;
+
+export const { increment, decrement, futureMonth, pastMonth, createTask, dragTask, resizeTask, selectTask, renameTask, descTask, createTheme, themeTask, startDateTask, endDateTask, updateThemesArray } = slice.actions;
 
 export const rowCountTable = state => state.table.rowCount;
 export const currentDayTable = state => state.table.currentDay;
@@ -172,5 +217,7 @@ export const daysTable = state => state.table.days;
 export const tasksTable = state => state.table.tasks;
 export const selectedTaskTable = state => state.table.selectedTask;
 export const themesTable = state => state.table.themes;
+export const rowsPerThemeTable = state => state.table.rowsPerTheme;
+export const themesArrayTable = state => state.table.themesArray;
 
 export default slice.reducer;
