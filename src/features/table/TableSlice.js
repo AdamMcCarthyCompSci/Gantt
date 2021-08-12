@@ -204,12 +204,26 @@ export const slice = createSlice({
         ))
       ))
       state.themesArray = updateArray;
+    },
+    dragThemesArray: (state, action) => {
+      console.log(action.payload.result);
+      const result = action.payload.result;
+      const dragging = state.themesArray[parseInt(result.draggableId)];
+      state.themesArray.splice(result.source.index, 1);
+      state.themesArray.splice(result.destination.index, 0, dragging);
+    },
+    dragRowsArray: (state, action) => {
+      console.log(action.payload.result);
+      const result = action.payload.result;
+      const dragging = state.themesArray[parseInt(result.draggableId)];
+      state.themesArray.splice(result.source.index, 1);
+      state.themesArray.splice(result.destination.index, 0, dragging);
     }
   },
 });
 
 
-export const { increment, decrement, futureMonth, pastMonth, createTask, dragTask, resizeTask, selectTask, renameTask, descTask, createTheme, themeTask, startDateTask, endDateTask, updateThemesArray } = slice.actions;
+export const { increment, decrement, futureMonth, pastMonth, createTask, dragTask, resizeTask, selectTask, renameTask, descTask, createTheme, themeTask, startDateTask, endDateTask, updateThemesArray, dragThemesArray, dragRowsArray } = slice.actions;
 
 export const rowCountTable = state => state.table.rowCount;
 export const currentDayTable = state => state.table.currentDay;

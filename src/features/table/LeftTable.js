@@ -5,6 +5,8 @@ import {
   themesTable,
   themesArrayTable,
   updateThemesArray,
+  dragThemesArray,
+  dragRowsArray,
 } from './TableSlice';
 import styles from './Table.module.css';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
@@ -32,7 +34,7 @@ export function LeftTable() {
             style={{backgroundColor: row.theme.color}}>
               {row.theme.title} {index}
             </td>
-            <DragDropContext onDragEnd={rowDragEnd()}>
+            <DragDropContext onDragEnd={rowDragEnd}>
             <Droppable droppableId={"droppableRows"}>
           {(provided, snapshot) => (
             <div
@@ -77,29 +79,80 @@ export function LeftTable() {
       }
     }
 
-    const getItemStyle = (isDragging, draggableStyle) => ({
-      // some basic styles to make the items look a bit nicer
-      userSelect: "none",
+    // const getItemStyle = (isDragging, draggableStyle) => ({
+    //   // some basic styles to make the items look a bit nicer
+    //   userSelect: "none",
     
-      // change background colour if dragging
-      background: isDragging ? "lightgreen" : "grey",
+    //   // change background colour if dragging
+    //   background: isDragging ? "lightgreen" : "grey",
     
-      // styles we need to apply on draggables
-      ...draggableStyle
-    });
+    //   // styles we need to apply on draggables
+    //   ...draggableStyle
+    // });
 
-    const getListStyle = isDraggingOver => ({
-      background: isDraggingOver ? "lightblue" : "lightgrey",
-      // padding: grid,
-      width: "100%",
-    });
+    // const getListStyle = isDraggingOver => ({
+    //   background: isDraggingOver ? "lightblue" : "lightgrey",
+    //   // padding: grid,
+    //   width: "100%",
+    // });
 
-    const themeDragEnd = () => {
-      // 
+    const themeDragEnd = (result) => {
+      const { destination, source } = result;
+  
+      if (!destination) {
+        return;
+      }
+  
+      if (
+        destination.droppableId === source.droppableId &&
+        destination.index === source.index
+      ) {
+        return;
+      }
+      else {
+        dispatch(dragThemesArray({result}));
+      }
     }
-    const rowDragEnd = () => {
-      // 
+    const rowDragEnd = (result) => {
+      const { destination, source} = result;
+  
+      if (!destination) {
+        return;
+      }
+  
+      if (
+        destination.droppableId === source.droppableId &&
+        destination.index === source.index
+      ) {
+        return;
+      }
+
+      else {
+        dispatch(dragRowsArray({result})); 
+      }
     }
+
+    // onDragEnd = result => {
+    //   const column = this.state.columns[source.droppableId];
+    //   const newTaskIds = Array.from(column.taskIds);
+    //   newTaskIds.splice(source.index, 1);
+    //   newTaskIds.splice(destination.index, 0, draggableId);
+  
+    //   const newColumn = {
+    //     ...column,
+    //     taskIds: newTaskIds,
+    //   };
+  
+    //   const newState = {
+    //     ...this.state,
+    //     columns: {
+    //       ...this.state.columns,
+    //       [newColumn.id]: newColumn,
+    //     },
+    //   };
+  
+    //   this.setState(newState);
+    // };
 
     useEffect(() => {
         dispatch(updateThemesArray({}));
@@ -107,7 +160,7 @@ export function LeftTable() {
 
     return (
         <div className={styles.leftTableContainer}>
-          <DragDropContext onDragEnd={themeDragEnd()}>
+          <DragDropContext onDragEnd={themeDragEnd}>
             <Droppable droppableId={"droppableThemes"}>
         {(provided, snapshot) => (
           <table
